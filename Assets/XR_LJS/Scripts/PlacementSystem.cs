@@ -1,83 +1,78 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlacementSystem : MonoBehaviour
 {
-    public Grid Grid;
-    public GameObject PObject;
-    Vector3Int lastCellPosition;
+    [SerializeField]
+    GameObject mouseIndicator, cellIndicator;
+    [SerializeField]
+    InputMGR inputMGR;
+    [SerializeField]
+    Grid grid;
 
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]
+    ObjectsDatabaseSO database;
+    int selectedobjectIndex = -1;
+
+    [SerializeField]
+    GameObject gridVisualization;
+
+    private void Start()
     {
+        StopPlacemet();
+    }
+
+    public void startPlacement(int ID) //https://youtu.be/i9W1kqUinIs?si=3vk3xC-v2FYZCUAW 
+    {
+       // StopPlacemet();
+        // 데이타 베이스 찾기 람다식으로 인덱스 찾아서 ID를 찾아 반환
+        selectedobjectIndex = database.objectData.FindIndex(data => data.ID == ID);
+        if (selectedobjectIndex < 0)
+        {
+            Debug.LogError($"No ID Found {ID}");
+            return;
+        }
+        gridVisualization.SetActive(true);
+        cellIndicator.SetActive(true);
+        inputMGR.OnClicked += PlaceStructure;
+        inputMGR.OnExit += StopPlacemet;
+    }
+
+    // 그리드 위에 있을 때 마우스 버튼을 누르면 새 객체를 인스턴스화 하고 객체의 위치에 배치하는 코드
+    private void PlaceStructure() 
+    {
+        if(inputMGR.isPointerOverUI())
+        {
+            return;
+        }
+        Vector3 mousePosition = inputMGR.GetSelectedMapPosition();
+        Vector3Int gridPosition = grid.WorldToCell(mousePosition);
+
+        // 선택 해제된 객체 인덱스를 선택하고 도트 프리팹을 추가할 것이므로 섹터 인덱스를 교체하여 게임 객체 프리팹 서버를 가져오는 방법
+        GameObject newObject = Instantiate(database.objectData[selectedobjectIndex].Prefab);
         
+        newObject.transform.position = grid.CellToWorld(gridPosition);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void StopPlacemet()
     {
-        // 마우스 포인터 위치에 따라 그리드 셀 좌표 계산
-        Vector3 mouseWorldPosition = GetMouseWorldPosition();
-        Vector3Int cellPosition = Grid.WorldToCell(mouseWorldPosition);
-
-        // 오브젝트가 새로운 셀에 들어갔을 때만 스냅
-        if (cellPosition != lastCellPosition)
-        {
-            lastCellPosition = cellPosition;
-
-            // 그리드 셀 좌표를 월드 좌표로 변환하여 3D 오브젝트 위치 업데이트
-            Vector3 snappedPosition = Grid.CellToWorld(cellPosition);
-            PObject.transform.position = snappedPosition;
-
-            // 배치 가능한지 여부에 따라 색상 변경
-            if (IsPlacementValid(cellPosition))
-            {
-                PObject.GetComponent<Renderer>().material.color = Color.green; // 배치 가능: 초록색
-            }
-            else
-            {
-                PObject.GetComponent<Renderer>().material.color = Color.red; // 배치 불가: 빨간색
-            }
-        }
-
-        // 90도 단위로 회전
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            PObject.transform.Rotate(0, 90, 0);
-        }
-
-        // 배치 확정 (마우스 클릭)
-        if (Input.GetMouseButtonDown(0) && IsPlacementValid(cellPosition))
-        {
-            PlaceObject(cellPosition);
-        }
+        selectedobjectIndex = -1;
+        gridVisualization.SetActive(false);
+        cellIndicator.SetActive(false);
+        inputMGR.OnClicked -= PlaceStructure;
+        inputMGR.OnExit -= StopPlacemet;
     }
 
-    // 마우스 위치를 월드 좌표로 변환
-    Vector3 GetMouseWorldPosition()
+    private void Update()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit))
-        {
-            return hit.point;
-        }
-        return Vector3.zero;
-    }
+        if (selectedobjectIndex < 0)  
+            return; 
+        Vector3 mousePosition = inputMGR.GetSelectedMapPosition();
+        Vector3Int gridPosition = grid.WorldToCell(mousePosition);
+        mouseIndicator.transform.position = mousePosition;
+        cellIndicator.transform.position = grid.CellToWorld(gridPosition);
 
-    // 배치 가능한지 확인 (충돌 검사)
-    bool IsPlacementValid(Vector3Int cellPosition)
-    {
-        Collider[] colliders = Physics.OverlapBox(Grid.CellToWorld(cellPosition), PObject.transform.localScale / 2);
-        return colliders.Length == 0; // 충돌이 없으면 배치 가능
-    }
-
-    // 오브젝트 배치 확정
-    void PlaceObject(Vector3Int cellPosition)
-    {
-        GameObject placedObject = Instantiate(PObject);
-        placedObject.transform.position = Grid.CellToWorld(cellPosition);
-        placedObject.GetComponent<Renderer>().material.color = Color.white; // 배치된 오브젝트는 흰색으로 표시
     }
 }
-
