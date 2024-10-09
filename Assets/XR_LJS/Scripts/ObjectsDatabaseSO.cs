@@ -7,6 +7,7 @@ using UnityEngine;
 public class ObjectsDatabaseSO : ScriptableObject
 {
     public List<ObjectData> objectData;
+    internal object objectsData;
 }
 
 [Serializable]

@@ -13,19 +13,18 @@ MonoBehaviour:
   m_Name: Database
   m_EditorClassIdentifier: 
   objectData:
-  - <Name>k__BackingField: 
+  - <Name>k__BackingField: Tree
     <ID>k__BackingField: 0
-    <Size>k__BackingField: {x: 0, y: 0}
-    <Prefab>k__BackingField: {fileID: 0}
-  - <Name>k__BackingField: 
-    <ID>k__BackingField: 0
-    <Size>k__BackingField: {x: 0, y: 0}
-    <Prefab>k__BackingField: {fileID: 0}
-  - <Name>k__BackingField: 
-    <ID>k__BackingField: 0
-    <Size>k__BackingField: {x: 0, y: 0}
-    <Prefab>k__BackingField: {fileID: 0}
-  - <Name>k__BackingField: 
-    <ID>k__BackingField: 0
-    <Size>k__BackingField: {x: 0, y: 0}
-    <Prefab>k__BackingField: {fileID: 0}
+    <Size>k__BackingField: {x: 1, y: 1}
+    <Prefab>k__BackingField: {fileID: 6809725612870941418, guid: b04a9e6bbfec6134eba42dbd5aa48707,
+      type: 3}
+  - <Name>k__BackingField: Plant
+    <ID>k__BackingField: 1
+    <Size>k__BackingField: {x: 1, y: 1}
+    <Prefab>k__BackingField: {fileID: 5008573569811496050, guid: 77d02533b315e25408b5f25a29a94ad7,
+      type: 3}
+  - <Name>k__BackingField: FerrisWheel
+    <ID>k__BackingField: 2
+    <Size>k__BackingField: {x: 2, y: 2}
+    <Prefab>k__BackingField: {fileID: 5444780692785600985, guid: 65c1c86b24a9e114189fee6e2d1fca40,
+      type: 3}
