@@ -16,12 +16,10 @@ public class PreviewSystem : MonoBehaviour
     Material previewMaterialsPrefab; // 프리뷰 재질 프리팹
     Material previewMasterialInstance; // 프리뷰 재질 인스턴스
 
-    Renderer cellIndicatorRenderer; // 셀 표시기의 렌더러
-
     private void Start()
     {
         previewMasterialInstance = new Material(previewMaterialsPrefab); // 프리뷰 재질 인스턴스 생성
-        cellIndicator.SetActive(false); // 초기에 셀 표시기 비활성화
+       
     }
 
     // 배치 프리뷰 표시 시작
@@ -30,7 +28,6 @@ public class PreviewSystem : MonoBehaviour
         previewObject = Instantiate(prefab); // 프리팹으로부터 프리뷰 객체 생성
         preparePreview(previewObject); // 프리뷰 객체 준비
         prepareCursor(Size); // 커서 준비
-        cellIndicator.SetActive(true); // 셀 표시기 활성화
     }
 
     // 커서 준비
@@ -38,8 +35,8 @@ public class PreviewSystem : MonoBehaviour
     {
         if (size.x > 0 || size.y > 0)
         {
-            cellIndicator.transform.localScale = new Vector3(size.x, 1, size.y); // 셀 표시기 크기 조정
-            cellIndicatorRenderer.GetComponentInChildren<Renderer>().material.mainTextureScale = size; // 텍스처 스케일 조정
+            previewObject.transform.localScale = new Vector3(size.x, 1, size.y); // 셀 표시기 크기 조정
+
         }
     }
 
@@ -61,15 +58,16 @@ public class PreviewSystem : MonoBehaviour
     // 프리뷰 표시 중지
     public void StopShowingPreview()
     {
-        cellIndicator.SetActive(false); // 셀 표시기 비활성화
+        if (previewObject != null)
+        {
         Destroy(previewObject); // 프리뷰 객체 제거
+        }
     }
 
     // 위치 업데이트
     public void updatePostion(Vector3 position, bool validity)
     {
         MovePreview(position); // 프리뷰 이동
-        MoveCursor(position); // 커서 이동
         ApplyFeedback(validity); // 유효성 피드백 적용
     }
 
@@ -78,7 +76,6 @@ public class PreviewSystem : MonoBehaviour
     {
         Color c = validity ? Color.white : Color.red; // 유효하면 흰색, 아니면 빨간색
         c.a = 0.5f; // 알파값 설정
-        cellIndicatorRenderer.material.color = c; // 셀 표시기 색상 변경
         previewMasterialInstance.color = c; // 프리뷰 재질 색상 변경
     }
 
@@ -95,5 +92,10 @@ public class PreviewSystem : MonoBehaviour
             position.x,
             position.y + previewYoffset, // Y축 오프셋 적용
             position.z);
+    }
+    public bool IsPointerOverUI()
+    {
+        return
+            UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject();
     }
 }

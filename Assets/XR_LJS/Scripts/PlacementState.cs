@@ -40,7 +40,8 @@ public class PlacementState : IBuildingState
                 database.objectData[selectedObjectIndex].Size);
         }
         else
-            throw new System.Exception($"No object with ID {iD}");
+            Debug.LogWarning($"No object with ID {ID} found. Using default object.");
+        selectedObjectIndex = 0; // 기본 오브젝트 사용
     }
 
     // 상태 종료 시 호출

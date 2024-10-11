@@ -6,8 +6,7 @@ using UnityEngine;
 [CreateAssetMenu] // Unity 에디터에서 이 ScriptableObject를 생성할 수 있게 해주는 속성
 public class ObjectsDatabaseSO : ScriptableObject
 {
-    public List<ObjectData> objectData; // ObjectData 객체들의 리스트
-    internal object objectsData; // 내부적으로 사용되는 객체 데이터 (현재 사용되지 않는 것으로 보임)
+    public List<ObjectData> objectData = new List<ObjectData>(); // ObjectData 객체들의 리스트
 }
 
 [Serializable] // 이 클래스를 직렬화 가능하게 만드는 속성
@@ -15,8 +14,6 @@ public class ObjectData // 객체 데이터를 정의하는 클래스
 {
     // 나중에는 서버에 저장해야할 것들
     // https://youtu.be/i9W1kqUinIs?si=1JJWg8ybyXCi-vbo 영상 그대로 구현됨
-
-    public int MyProperty { get; set; } // 사용 목적이 명확하지 않은 프로퍼티
 
     [field: SerializeField] // 이 필드를 Unity Inspector에서 표시하고 직렬화
     public string Name { get; private set; } // 객체의 이름

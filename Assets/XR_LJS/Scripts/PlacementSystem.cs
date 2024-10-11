@@ -2,96 +2,152 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI; // UI 요소를 사용하기 위해 UnityEngine.UI를 추가
 
 public class PlacementSystem : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject mouseIndicator; // 마우스 인디케이터를 나타내는 게임 오브젝트
-    [SerializeField]
-    InputMGR inputMGR; // 사용자 입력을 관리하는 클래스
-    [SerializeField]
-    Grid grid; // 유니티의 그리드 시스템, 월드 좌표를 그리드 좌표로 변환하는 데 사용
+    [SerializeField] private GameObject mouseIndicator; // 마우스 위치를 표시할 게임 오브젝트
+    [SerializeField] private InputMGR inputMGR; // 입력 관리자
+    [SerializeField] private Grid grid; // 유니티 그리드 시스템
+    [SerializeField] private ObjectsDatabaseSO database; // 배치 가능한 오브젝트 데이터베이스
+    [SerializeField] private GameObject gridVisualization; // 그리드를 시각적으로 표시할 게임 오브젝트
+    [SerializeField] private PreviewSystem preview; // 배치 미리보기 시스템
+    [SerializeField] private ObjectPlacer objectPlacer; // 실제 오브젝트 배치를 담당하는 클래스
+    [SerializeField] private Button startPlacementButton; // 배치 모드를 시작/종료하는 버튼
 
-    [SerializeField]
-    ObjectsDatabaseSO database; // 배치할 객체의 데이터를 저장한 데이터베이스
-
-    [SerializeField]
-    GameObject gridVisualization; // 그리드 시각화용 게임 오브젝트
-
-    private GridData floorData, furnitureData; // 바닥과 가구 데이터를 저장하는 클래스
-
-    [SerializeField]
-    PreviewSystem preview; // 객체 배치 전 미리보기 기능을 제공하는 시스템
-
-    Vector3Int lastDetectedPosition = Vector3Int.zero; // 마지막으로 감지된 그리드 위치
-
-    [SerializeField]
-    private ObjectPlacer objectPlacer; // 객체를 그리드에 배치하는 클래스
-
-    IBuildingState buildingState; // 객체 배치 상태를 관리하는 인터페이스
+    private GridData floorData, furnitureData; // 바닥과 가구의 배치 데이터
+    private Vector3Int lastDetectedPosition = Vector3Int.zero; // 마지막으로 감지된 그리드 위치
+    private IBuildingState buildingState; // 현재 건설 상태
+    private bool isInPlacementMode = false; // 현재 배치 모드 상태
 
     private void Start()
     {
-        StopPlacement(); // 초기화 시 배치를 중지
-        floorData = new(); // 바닥 데이터 초기화
-        furnitureData = new(); // 가구 데이터 초기화
+        InitializeComponents(); // 컴포넌트 초기화
+        floorData = new GridData(); // 바닥 데이터 초기화
+        furnitureData = new GridData(); // 가구 데이터 초기화
+        gridVisualization.SetActive(false);
+        preview.gameObject.SetActive(false); // 초기에 프리뷰 비활성화
+
+        // 배치 모드 시작/종료 버튼 설정
+        if (startPlacementButton != null)
+        {
+            startPlacementButton.onClick.AddListener(() => TogglePlacementMode(0)); // 버튼에 할당된 오브젝트 
+        }
+        else
+        {
+            Debug.LogError("인스펙터에서 시작 배치 버튼이 할당되지 않았습니다.");
+        }
     }
 
-    // 배치를 시작하는 함수, ID를 통해 배치할 객체 선택
-    public void startPlacement(int ID)
+    //필요한 컴포넌트들이 모두 할당되었는지 확인
+    private void InitializeComponents()
     {
-        StopPlacement(); // 기존 배치를 중지
-        gridVisualization.SetActive(true); // 그리드 시각화 활성화
-        buildingState = new PlacementState(ID,
-                                           grid,
-                                           preview,
-                                           database,
-                                           floorData,
-                                           furnitureData,
-                                           objectPlacer); // 새로운 배치 상태 초기화
-        inputMGR.OnClicked += PlaceStructure; // 클릭 이벤트에 배치 함수 등록
-        inputMGR.OnExit += StopPlacement; // 나가기 이벤트에 배치 중지 함수 등록
+        if (inputMGR == null || grid == null || database == null ||
+            gridVisualization == null || preview == null || objectPlacer == null)
+        {
+            Debug.LogError("인스펙터에서 하나 이상의 컴포넌트가 할당되지 않았습니다.");
+            enabled = false; // 컴포넌트 비활성화
+        }
     }
 
-    // 마우스 클릭 시 객체를 그리드 위에 배치하는 함수
+    // 배치 모드 전환 (켜기/끄기)
+    public void TogglePlacementMode(int objectId)
+    {
+        if (isInPlacementMode)
+        {
+            StopPlacement(); // 배치 모드 종료
+        }
+        else
+        {
+            StartPlacement(objectId); // 배치 모드 시작
+        }
+        isInPlacementMode = !isInPlacementMode; // 상태 전환
+    }
+    public void ChangeSelectedObject(int objectId)
+    {
+        if (!isInPlacementMode)
+        {
+            StartPlacement(objectId);
+        }
+        else
+        {
+            UpdatePlacementObject(objectId);
+        }
+    }
+
+    private void UpdatePlacementObject(int id)
+    {
+        if (database.objectData.Count == 0)
+        {
+            Debug.LogError("Object database is empty!");
+            return;
+        }
+
+        buildingState.EndState();
+        buildingState = new PlacementState(id, grid, preview, database, floorData, furnitureData, objectPlacer);
+        Debug.Log($"Changed selected object. New object ID: {id}");
+    }
+
+    private void StartPlacement(int id)
+    {
+        if (database.objectData.Count == 0)
+        {
+            Debug.LogError("Object database is empty!");
+            return;
+        }
+
+        gridVisualization.SetActive(true);
+        preview.gameObject.SetActive(true);
+        buildingState = new PlacementState(id, grid, preview, database, floorData, furnitureData, objectPlacer);
+        inputMGR.OnClicked += PlaceStructure;
+        inputMGR.OnExit += StopPlacement;
+        isInPlacementMode = true;
+        Debug.Log($"Placement mode started. Selected object ID: {id}");
+    }
+
+    // 구조물 배치
     private void PlaceStructure()
     {
-        if (inputMGR.isPointerOverUI()) // 만약 마우스가 UI 위에 있다면 배치를 중지
+        bool isOverUI = inputMGR.IsPointerOverUI();
+        Debug.Log($"PlaceStructure: IsPointerOverUI = {isOverUI}");
+        if (isOverUI)
         {
+            Debug.Log("UI 위에서는 오브젝트를 배치할 수 없습니다.");
             return;
         }
-        Vector3 mousePosition = inputMGR.GetSelectedMapPosition(); // 마우스 위치를 맵 좌표로 변환
+        Vector3 mousePosition = inputMGR.GetSelectedMapPosition(); // 마우스 위치 가져오기
         Vector3Int gridPosition = grid.WorldToCell(mousePosition); // 월드 좌표를 그리드 좌표로 변환
 
-        buildingState.OnAction(gridPosition); // 배치 상태에서의 동작 수행
+        buildingState.OnAction(gridPosition); // 현재 상태에 따라 배치 액션 수행
+        Debug.Log($"그리드 위치 {gridPosition}에 오브젝트 배치 시도");
     }
 
-    // 배치를 중지하는 함수
+    // 배치 모드 중지
     private void StopPlacement()
     {
-        if (buildingState == null) // 배치 상태가 없으면 리턴
-        {
-            return;
-        }
+        if (buildingState == null) return;
+
         gridVisualization.SetActive(false); // 그리드 시각화 비활성화
-        buildingState.EndState(); // 배치 상태 종료
-        inputMGR.OnClicked -= PlaceStructure; // 클릭 이벤트에서 배치 함수 제거
-        inputMGR.OnExit -= StopPlacement; // 나가기 이벤트에서 배치 중지 함수 제거
-        lastDetectedPosition = Vector3Int.zero; // 마지막 감지된 위치 초기화
-        buildingState = null; // 현재 배치 상태 초기화
+        preview.gameObject.SetActive(false); // 프리뷰 비활성화
+        buildingState.EndState(); // 현재 상태 종료
+        inputMGR.OnClicked -= PlaceStructure; // 클릭 이벤트에서 구조물 배치 함수 제거
+        inputMGR.OnExit -= StopPlacement; // 종료 이벤트에서 배치 중지 함수 제거
+        buildingState = null; // 상태 초기화
+        Debug.Log("배치 모드가 종료되었습니다.");
     }
 
-    // 매 프레임마다 그리드 좌표 갱신 및 배치 상태 업데이트
+    // 매 프레임마다 실행되는 업데이트 함수
     private void Update()
     {
-        if (buildingState == null) // 배치 상태가 없으면 리턴
-            return;
-        Vector3 mousePosition = inputMGR.GetSelectedMapPosition(); // 마우스 위치를 가져옴
-        Vector3Int gridPosition = grid.WorldToCell(mousePosition); // 마우스 위치를 그리드 좌표로 변환
-        if (lastDetectedPosition != gridPosition) // 마지막 감지된 위치와 현재 위치가 다르면
+        if (buildingState == null) return;
+
+        Vector3 mousePosition = inputMGR.GetSelectedMapPosition(); // 현재 마우스 위치 가져오기
+        Vector3Int gridPosition = grid.WorldToCell(mousePosition); // 그리드 좌표로 변환
+
+        if (lastDetectedPosition != gridPosition) // 위치가 변경되었을 때만 업데이트
         {
-            buildingState.UpdateState(gridPosition); // 배치 상태 갱신
-            lastDetectedPosition = gridPosition; // 마지막 위치 업데이트
+            buildingState.UpdateState(gridPosition); // 상태 업데이트
+            lastDetectedPosition = gridPosition; // 마지막 감지 위치 갱신
         }
     }
 }
