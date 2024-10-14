@@ -44,6 +44,21 @@ public class PlacementState : IBuildingState
         selectedObjectIndex = 0; // 기본 오브젝트 사용
     }
 
+    public bool CheckPlacementValidity(Vector3Int gridPosition)
+    {
+        return CanPlaceObjectAt(gridPosition);
+    }
+
+    private bool CanPlaceObjectAt(Vector3Int gridPosition)
+    {
+        return GetSelectedData().CanPlaceObjectAt(gridPosition, database.objectData[selectedObjectIndex].Size);
+    }
+
+    private GridData GetSelectedData()
+    {
+        return database.objectData[selectedObjectIndex].ID == 0 ? floorData : furnitureData;
+    }
+
     // 상태 종료 시 호출
     public void EndState()
     {
@@ -53,26 +68,24 @@ public class PlacementState : IBuildingState
     // 액션 수행 (오브젝트 배치)
     public void OnAction(Vector3Int gridPosition)
     {
-        bool placementValidity = CheckPlacementValidity(gridPosition, selectedObjectIndex);
-        if (placementValidity == false)
+        if (!CanPlaceObjectAt(gridPosition))
+        {
+            Debug.Log($"오브젝트를 배치할 수 없습니다: 그리드 위치 {gridPosition}");
             return;
+        }
 
-        // 오브젝트 배치
-        int index = objectPlacer.Placeobject(database.objectData[selectedObjectIndex].Prefab, grid.CellToWorld(gridPosition));
+        int index = objectPlacer.PlaceObject(database.objectData[selectedObjectIndex].Prefab,
+                                             grid.CellToWorld(gridPosition));
 
-        // 선택된 데이터 (바닥 또는 가구)
-        GridData selectedData = database.objectData[selectedObjectIndex].ID == 0 ?
-            floorData :
-            furnitureData;
-
-        // 그리드 데이터에 오브젝트 추가
+        GridData selectedData = GetSelectedData();
         selectedData.AddObjectAt(gridPosition,
             database.objectData[selectedObjectIndex].Size,
             database.objectData[selectedObjectIndex].ID,
             index);
 
-        // 프리뷰 업데이트
-        previewSystem.updatePostion(grid.CellToWorld(gridPosition), false);
+        Debug.Log($"오브젝트가 성공적으로 배치되었습니다: 그리드 위치 {gridPosition}, 인덱스 {index}");
+            // 프리뷰 업데이트
+    previewSystem.updatePostion(grid.CellToWorld(gridPosition), false);
     }
 
     // 배치 가능 여부 확인

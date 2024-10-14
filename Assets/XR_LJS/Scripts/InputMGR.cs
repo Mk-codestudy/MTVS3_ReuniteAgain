@@ -10,7 +10,7 @@ public class InputMGR : MonoBehaviour
     [SerializeField] private LayerMask placementLayermask;
     [SerializeField] private float raycastDistance = 1000f;
 
-    private int uiLayer;
+    public int uiLayer;
 
     public event Action OnClicked;
     public event Action OnExit;
@@ -38,12 +38,14 @@ public class InputMGR : MonoBehaviour
         Ray ray = sceneCamera.ScreenPointToRay(mousePos);
         RaycastHit hit;
 
-        int layerMask = placementLayermask & ~(1 << uiLayer);
+
+        int layerMask = placementLayermask & ~(1 << 5);
 
         if (Physics.Raycast(ray, out hit, raycastDistance, layerMask))
         {
             Vector3Int gridPosition = Vector3Int.RoundToInt(hit.point);
             Debug.Log($"선택된 맵 위치 (그리드): {gridPosition}");
+        print(hit.collider.gameObject);
             return gridPosition;
         }
         else
@@ -55,10 +57,11 @@ public class InputMGR : MonoBehaviour
         }
     }
 
-    public bool IsPointerOverUI()
-    {
-        return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
-    }
+    //*********************************************************************************************** Tlqkf
+    //public bool IsPointerOverUI() 
+    //{
+    //    return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+    //}
 
     private void OnDrawGizmos()
     {

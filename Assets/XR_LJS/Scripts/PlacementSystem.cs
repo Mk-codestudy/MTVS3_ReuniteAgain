@@ -67,54 +67,54 @@ public class PlacementSystem : MonoBehaviour
     {
         if (!isInPlacementMode)
         {
-            StartPlacement(objectId);
+            StartPlacement(objectId); // 배치 모드가 아니면 시작
         }
         else
         {
-            UpdatePlacementObject(objectId);
+            UpdatePlacementObject(objectId); // 이미 배치 모드면 오브젝트만 업데이트
         }
     }
-
+    // 배치 오브젝트 업데이트 메서드
     private void UpdatePlacementObject(int id)
     {
         if (database.objectData.Count == 0)
         {
-            Debug.LogError("Object database is empty!");
+            Debug.LogError("오브젝트 데이터베이스가 비어있습니다!");
             return;
         }
 
-        buildingState.EndState();
+        buildingState.EndState(); // 현재 상태 종료
         buildingState = new PlacementState(id, grid, preview, database, floorData, furnitureData, objectPlacer);
-        Debug.Log($"Changed selected object. New object ID: {id}");
+        Debug.Log($"선택된 오브젝트가 변경되었습니다. 선택된 오브젝트 ID: {id}"); // 새 상태 생성
     }
 
     private void StartPlacement(int id)
     {
         if (database.objectData.Count == 0)
         {
-            Debug.LogError("Object database is empty!");
+            Debug.LogError("오브젝트 데이터베이스가 비어있습니다!");
             return;
         }
 
+        Debug.Log($"선택된 오브젝트가 변경되었습니다. 선택된 오브젝트 ID: {id}");
         gridVisualization.SetActive(true);
         preview.gameObject.SetActive(true);
         buildingState = new PlacementState(id, grid, preview, database, floorData, furnitureData, objectPlacer);
         inputMGR.OnClicked += PlaceStructure;
         inputMGR.OnExit += StopPlacement;
         isInPlacementMode = true;
-        Debug.Log($"Placement mode started. Selected object ID: {id}");
     }
 
     // 구조물 배치
     private void PlaceStructure()
     {
-        bool isOverUI = inputMGR.IsPointerOverUI();
-        Debug.Log($"PlaceStructure: IsPointerOverUI = {isOverUI}");
-        if (isOverUI)
-        {
-            Debug.Log("UI 위에서는 오브젝트를 배치할 수 없습니다.");
-            return;
-        }
+        //bool isOverUI = inputMGR.IsPointerOverUI();
+       // Debug.Log($"PlaceStructure: IsPointerOverUI = {isOverUI}");
+       // if (isOverUI)
+       // {
+       //     Debug.Log("UI 위에서는 오브젝트를 배치할 수 없습니다.");
+       //     return;
+       // }
         Vector3 mousePosition = inputMGR.GetSelectedMapPosition(); // 마우스 위치 가져오기
         Vector3Int gridPosition = grid.WorldToCell(mousePosition); // 월드 좌표를 그리드 좌표로 변환
 
@@ -150,4 +150,6 @@ public class PlacementSystem : MonoBehaviour
             lastDetectedPosition = gridPosition; // 마지막 감지 위치 갱신
         }
     }
+
+    
 }
