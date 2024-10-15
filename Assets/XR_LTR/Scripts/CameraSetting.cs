@@ -10,33 +10,28 @@ public class CameraSetting : MonoBehaviour
     public float maxYrot = 70f;
     public float minYrot = -70f;
 
-    public float moveSpeed = 0.5f;
     public float rotationSpeed = -0.5f;
+    public Vector3 startRotation;
 
     float mouseY = 90;
     float mouseX = 30;
 
+    private bool isRightClickHeld = false; // 우클릭이 처음 눌렸는지 확인하는 변수
+
     void Start()
     {
-        
+        Vector3 startRotation = transform.rotation.eulerAngles;
     }
 
     void Update()
     {
-        if (Input.GetMouseButton(1)) MouseRotate();
-    }
+        if (Input.GetMouseButton(1))
+        {
+            mouseY += Input.GetAxis("Mouse X") * mouseSecstv * Time.deltaTime;
 
-    void MouseRotate() 
-    {
-        mouseY += Input.GetAxisRaw("Mouse X") * mouseSecstv * Time.deltaTime;
-        mouseX -= Input.GetAxisRaw("Mouse Y") * mouseSecstv * Time.deltaTime;
-
-        // 상하 회전 각도를 제한하여 너무 뒤로 회전하지 않도록 합니다.
-        mouseX = Mathf.Clamp(mouseX, minYrot, maxYrot);
-
-        Vector3 rotation = Vector3.zero;
-        rotation.y = mouseY;
-        rotation.x = mouseX;
-        transform.rotation = Quaternion.Euler(rotation);
+            Vector3 rotation = Vector3.zero;
+            rotation.y = mouseY;
+            transform.rotation = Quaternion.Euler(startRotation + rotation);
+        }
     }
 }

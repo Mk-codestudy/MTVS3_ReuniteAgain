@@ -10,6 +10,8 @@ public class BlendShapeMgr : MonoBehaviour
     // 슬라이더 가져오기
     public Slider slider1; //몸통
     public Slider slider2; //머리
+    public Slider slider3; //꼬리1
+    public Slider slider4; //꼬리2
 
     public FlexibleColorPicker fcp;
     
@@ -25,7 +27,7 @@ public class BlendShapeMgr : MonoBehaviour
         customObj = GameObject.FindWithTag("Player"); // 나중에는 서버에서 명령을 받아서 해당 prefab을 불러오는 것으로 변경
         mesh = customObj.GetComponent<Mesh>();
         smr = customObj.GetComponent<SkinnedMeshRenderer>();
-        material = smr.materials[1];
+        material = smr.materials[2];
     }
 
     void Update()
@@ -45,6 +47,8 @@ public class BlendShapeMgr : MonoBehaviour
             smr.SetBlendShapeWeight(5, slider1.value); // 몸매 뚱뚱함
             smr.SetBlendShapeWeight(2, slider2.value); // 얼굴 넙적함
         }
+        smr.SetBlendShapeWeight(0, slider3.value);
+        smr.SetBlendShapeWeight(1, slider4.value);
         material.color = fcp.color;
     }
 }
