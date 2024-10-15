@@ -53,6 +53,21 @@ public class GridData
         }
         return true;
     }
+
+    internal int GetRepresentationIndex(Vector3Int gridPosition)
+    {
+        if(PlacedObjects.ContainsKey(gridPosition) == false)
+            return -1;
+        return PlacedObjects[gridPosition].placeObjectIndex;
+    }
+
+    internal void RemoveObjectAt(Vector3Int gridPosition)
+    {
+        foreach (var pos in PlacedObjects[gridPosition].occupiedPositions)
+        {
+            PlacedObjects.Remove(pos);
+        }
+    }
 }
 
 // 배치된 객체의 데이터를 저장하는 클래스

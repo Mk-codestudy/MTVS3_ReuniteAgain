@@ -1,19 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Unity.VisualScripting.Member;
 
 public class PlacementState : IBuildingState
 {
     private int selectedObjectIndex = -1; // 선택된 오브젝트의 인덱스
-    int ID; // 오브젝트 ID
-    Grid grid; // 그리드 시스템
-    PreviewSystem previewSystem; // 프리뷰 시스템
-    ObjectsDatabaseSO database; // 오브젝트 데이터베이스
-    GridData floorData; // 바닥 데이터
-    GridData furnitureData; // 가구 데이터
-    ObjectPlacer objectPlacer; // 오브젝트 배치기
+    int ID; // 오브젝트의 고유 ID
+    Grid grid; // Unity의 Grid 컴포넌트 참조
+    PreviewSystem previewSystem; // 미리보기 시스템 참조
+    ObjectsDatabaseSO database; // 오브젝트 데이터베이스 참조
+    GridData floorData; // 바닥 데이터 참조
+    GridData furnitureData; // 가구 데이터 참조
+    ObjectPlacer objectPlacer; // 오브젝트 배치 시스템 참조
 
-    // 생성자
+
     public PlacementState(int iD,
                           Grid grid,
                           PreviewSystem previewSystem,
@@ -22,6 +23,7 @@ public class PlacementState : IBuildingState
                           GridData furnitureData,
                           ObjectPlacer objectPlacer)
     {
+        // 생성자: 모든 필요한 참조와 데이터를 초기화
         ID = iD;
         this.grid = grid;
         this.previewSystem = previewSystem;
@@ -30,79 +32,78 @@ public class PlacementState : IBuildingState
         this.furnitureData = furnitureData;
         this.objectPlacer = objectPlacer;
 
-        // ID에 해당하는 오브젝트 인덱스 찾기
+        // 데이터베이스에서 주어진 ID에 해당하는 오브젝트의 인덱스를 찾음
         selectedObjectIndex = database.objectData.FindIndex(data => data.ID == ID);
         if (selectedObjectIndex > -1)
         {
-            // 프리뷰 시작
+            // 유효한 인덱스를 찾았다면 미리보기 시작
             previewSystem.StartShowingPlacementPreview(
                 database.objectData[selectedObjectIndex].Prefab,
                 database.objectData[selectedObjectIndex].Size);
         }
         else
-            Debug.LogWarning($"No object with ID {ID} found. Using default object.");
-        selectedObjectIndex = 0; // 기본 오브젝트 사용
+            // 유효한 인덱스를 찾지 못했다면 예외 발생
+            throw new System.Exception($"No object with ID {iD}");
+
     }
 
-    public bool CheckPlacementValidity(Vector3Int gridPosition)
-    {
-        return CanPlaceObjectAt(gridPosition);
-    }
-
-    private bool CanPlaceObjectAt(Vector3Int gridPosition)
-    {
-        return GetSelectedData().CanPlaceObjectAt(gridPosition, database.objectData[selectedObjectIndex].Size);
-    }
-
-    private GridData GetSelectedData()
-    {
-        return database.objectData[selectedObjectIndex].ID == 0 ? floorData : furnitureData;
-    }
-
-    // 상태 종료 시 호출
     public void EndState()
     {
+        // 상태 종료 시 미리보기 중지
         previewSystem.StopShowingPreview();
     }
 
-    // 액션 수행 (오브젝트 배치)
     public void OnAction(Vector3Int gridPosition)
     {
-        if (!CanPlaceObjectAt(gridPosition))
+        // 사용자 액션(예: 클릭) 시 호출되는 메서드
+
+        // 현재 그리드 위치에 오브젝트 배치 가능 여부 확인
+        bool placementValidity = CheckPlacementValidity(gridPosition, selectedObjectIndex);
+        if (placementValidity == false)
         {
-            Debug.Log($"오브젝트를 배치할 수 없습니다: 그리드 위치 {gridPosition}");
-            return;
+            return; // 배치 불가능하면 메서드 종료
         }
 
+        // 오브젝트 실제 배치
         int index = objectPlacer.PlaceObject(database.objectData[selectedObjectIndex].Prefab,
-                                             grid.CellToWorld(gridPosition));
+            grid.CellToWorld(gridPosition));
 
-        GridData selectedData = GetSelectedData();
+        // 바닥인지 가구인지에 따라 적절한 GridData 선택
+        GridData selectedData = database.objectData[selectedObjectIndex].ID == 0 ?
+            floorData :
+            furnitureData;
+
+        // 선택된 GridData에 오브젝트 정보 추가
         selectedData.AddObjectAt(gridPosition,
             database.objectData[selectedObjectIndex].Size,
             database.objectData[selectedObjectIndex].ID,
             index);
 
-        Debug.Log($"오브젝트가 성공적으로 배치되었습니다: 그리드 위치 {gridPosition}, 인덱스 {index}");
-            // 프리뷰 업데이트
-    previewSystem.updatePostion(grid.CellToWorld(gridPosition), false);
+        // 미리보기 위치 업데이트 (배치 후에는 유효하지 않음을 표시)
+        previewSystem.UpdatePosition(grid.CellToWorld(gridPosition), false);
     }
 
-    // 배치 가능 여부 확인
-    private bool CheckPlacementValidity(Vector3Int gridPosition, int selectedobjectIndex)
+    private bool CheckPlacementValidity(Vector3Int gridPosition, int selectedObjectIndex)
     {
-        GridData selectedData = database.objectData[selectedobjectIndex].ID == 0 ?
+        // 오브젝트 배치 가능 여부를 확인하는 메서드
+
+        // 바닥인지 가구인지에 따라 적절한 GridData 선택
+        GridData selectedData = database.objectData[selectedObjectIndex].ID == 0 ?
             floorData :
             furnitureData;
 
-        return selectedData.CanPlaceObjectAt(gridPosition, database.objectData[selectedobjectIndex].Size);
+        // 선택된 위치에 오브젝트 배치 가능 여부 반환
+        return selectedData.CanPlaceObjectAt(gridPosition, database.objectData[selectedObjectIndex].Size);
     }
 
-    // 상태 업데이트 (프리뷰 위치 갱신)
     public void UpdateState(Vector3Int gridPosition)
     {
+        // 상태 업데이트 (예: 마우스 이동 시 호출)
+
+        // 현재 그리드 위치의 배치 가능 여부 확인
         bool placementValidity = CheckPlacementValidity(gridPosition, selectedObjectIndex);
 
-        previewSystem.updatePostion(grid.CellToWorld(gridPosition), placementValidity);
+        // 미리보기 시스템 업데이트
+        previewSystem.UpdatePosition(grid.CellToWorld(gridPosition), placementValidity);
     }
 }

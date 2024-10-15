@@ -16,7 +16,7 @@ public class PlacementButton : MonoBehaviour
 
         if (button != null && placementSystem != null)
         {
-            button.onClick.AddListener(() => placementSystem.ChangeSelectedObject(objectId));
+           // button.onClick.AddListener(() => placementSystem.ChangeSelectedObject(objectId));
         }
         else
         {
