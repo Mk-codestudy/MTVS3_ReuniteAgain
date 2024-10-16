@@ -17,17 +17,19 @@ public class SaveJsonCustom : MonoBehaviour
     public void saveButton() 
     {
         // 완료하기 버튼을 클릭하면 커스텀 패러미터 수치가 json으로 저장된다.
+        SaveCustomData(bsm.parameters, bsm.colorHex);
     }
     
-    void SaveCustomData(int index, float parameter, Color color) 
+    void SaveCustomData(float[] parameter, string color) 
     {
         CharacterData character = LoadCharacterData();
 
+
+
         CustomData newCustomData = new CustomData
         {
-            idx = index,
             pmtr = parameter,
-            col = color,
+            colHex = color
         };
         character.data.Add(newCustomData);
 
@@ -45,9 +47,8 @@ public class SaveJsonCustom : MonoBehaviour
 [System.Serializable]
 public class CustomData
 {
-    public int idx; // 블렌드셰이프
-    public float pmtr; // 슬라이더 수치값
-    public Color col; // 컬러값
+    public float[] pmtr = new float[6]; // 슬라이더 수치값
+    public string colHex; // 색상 hex코드
 }
 
 [System.Serializable]

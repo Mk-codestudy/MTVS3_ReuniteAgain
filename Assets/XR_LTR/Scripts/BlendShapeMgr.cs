@@ -1,17 +1,30 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class BlendShapeMgr : MonoBehaviour
 {
-    // 메쉬의 BlendShape옵션을 슬라이더에 연결하여 슬라이더를 통해 BlendShape 키 갑을 조정한다.
+    // 메쉬의 BlendShape옵션을 슬라이더에 연결하여 슬라이더를 통해 BlendShape 키 값을 조정한다.
+    /* 
+     0 : shot 꼬리 길이
+     1 : thin 꼬리 굵기
+     2 : big 머리 크게
+     3 : small 머리 작게
+     4 : skinny 마르게
+     5 : fat 뚱뚱하게
+    */
 
     // 슬라이더 가져오기
-    public Slider slider1; //몸통
-    public Slider slider2; //머리
-    public Slider slider3; //꼬리1
-    public Slider slider4; //꼬리2
+    public Slider sliderBody; //몸통
+    public Slider sliderHead; //머리
+    public Slider sliderLength; //꼬리 길이
+    public Slider sliderThick; //꼬리 굵기
+
+    public float[] parameters = new float[6];
+    public string colorHex;
 
     public FlexibleColorPicker fcp;
     
@@ -34,21 +47,45 @@ public class BlendShapeMgr : MonoBehaviour
     {
         //SkinnedMeshRenderer.SetBlendShapeWeight(조절할 BlendShape의 인덱스 번호, 해당하는 슬라이더의 value);
 
-        // 만약 0을 기준으로 
-        //value값이 음수에 가까워진다면 'skinny'수치가 증가, 
-        if (slider1.value < 0)
+        // 몸매 조절
+        if (sliderBody.value < 0)
         {
-            smr.SetBlendShapeWeight(4, slider1.value * -1); //몸매 날씬함
-            smr.SetBlendShapeWeight(3, slider2.value * -1); //얼굴 홀쭉함
+            smr.SetBlendShapeWeight(4, sliderBody.value * -1); // 몸매 날씬함
         }
-        //양수에 가까워진다면 'fat'값이 증가
         else
         {
-            smr.SetBlendShapeWeight(5, slider1.value); // 몸매 뚱뚱함
-            smr.SetBlendShapeWeight(2, slider2.value); // 얼굴 넙적함
+            smr.SetBlendShapeWeight(4, 0);
+            smr.SetBlendShapeWeight(5, sliderBody.value); // 몸매 뚱뚱함
         }
-        smr.SetBlendShapeWeight(0, slider3.value);
-        smr.SetBlendShapeWeight(1, slider4.value);
+
+        // 머리 크기 조절
+        if (sliderHead.value < 0)
+        {
+            smr.SetBlendShapeWeight(3, sliderHead.value * -1); //머리 작음
+        }
+        else
+        {
+            smr.SetBlendShapeWeight(3, 0);
+            smr.SetBlendShapeWeight(2, sliderHead.value); // 머리 큼
+        }
+
+        // 꼬리 조절
+        smr.SetBlendShapeWeight(0, sliderLength.value);
+        smr.SetBlendShapeWeight(1, sliderThick.value);
+
+        // 특정 부위의 조절은 컬러피커로 한다
         material.color = fcp.color;
+    }
+
+    public void clickSave() 
+    {
+        // 조절된 수치값을 배열에 담는다.
+        for (int i = 0; i < 6; i++)
+        {
+            parameters[i] = smr.GetBlendShapeWeight(i);
+            print(parameters[i]);
+        }
+        colorHex = "#" + ColorUtility.ToHtmlStringRGB(material.color);       
+        print(colorHex);
     }
 }
