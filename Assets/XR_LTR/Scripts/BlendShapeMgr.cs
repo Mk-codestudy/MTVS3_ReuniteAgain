@@ -24,23 +24,27 @@ public class BlendShapeMgr : MonoBehaviour
     public Slider sliderThick; //꼬리 굵기
 
     public float[] parameters = new float[6];
-    public string colorHex;
+    public List<float> colorEye;
+    public List<float> colorNose;
 
-    public FlexibleColorPicker fcp;
+    public FlexibleColorPicker fcp_eye;
+    public FlexibleColorPicker fcp_nose;
     
     // 커스텀할 오브젝트와 해당 오브젝트의 SkinnedMeshRenderer컴포넌트 불러오기
     [SerializeField]
     GameObject customObj;
     Mesh mesh;
     SkinnedMeshRenderer smr;
-    Material material;
+    Material eyeMat;
+    Material noseMat;
 
     void Start()
     {
         customObj = GameObject.FindWithTag("Player"); // 나중에는 서버에서 명령을 받아서 해당 prefab을 불러오는 것으로 변경
         mesh = customObj.GetComponent<Mesh>();
         smr = customObj.GetComponent<SkinnedMeshRenderer>();
-        material = smr.materials[2];
+        eyeMat = smr.materials[3];
+        noseMat = smr.materials[1];
     }
 
     void Update()
@@ -74,7 +78,8 @@ public class BlendShapeMgr : MonoBehaviour
         smr.SetBlendShapeWeight(1, sliderThick.value);
 
         // 특정 부위의 조절은 컬러피커로 한다
-        material.color = fcp.color;
+        eyeMat.color = fcp_eye.color;
+        noseMat.color = fcp_nose.color;
     }
 
     public void clickSave() 
@@ -85,7 +90,16 @@ public class BlendShapeMgr : MonoBehaviour
             parameters[i] = smr.GetBlendShapeWeight(i);
             print(parameters[i]);
         }
-        colorHex = "#" + ColorUtility.ToHtmlStringRGB(material.color);       
-        print(colorHex);
+
+        SaveRGB(colorEye, eyeMat);
+        SaveRGB(colorNose, noseMat);
+    }
+
+    void SaveRGB(List<float> color, Material part) 
+    {
+        color.Add(part.color.r);
+        color.Add(part.color.g);
+        color.Add(part.color.b);
+        print(color);
     }
 }
