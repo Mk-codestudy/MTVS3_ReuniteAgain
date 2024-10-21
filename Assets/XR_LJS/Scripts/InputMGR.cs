@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,42 +7,47 @@ using UnityEngine.EventSystems;
 public class InputManager : MonoBehaviour
 {
     [SerializeField]
-    private Camera sceneCamera; // ¾À Ä«¸Ş¶ó ÂüÁ¶
+    private Camera sceneCamera; // ì”¬ ì¹´ë©”ë¼ ì°¸ì¡°
 
-    private Vector3 lastPosition; // ¸¶Áö¸·À¸·Î °¨ÁöµÈ À§Ä¡
+    private Vector3 lastPosition; // ë§ˆì§€ë§‰ìœ¼ë¡œ ê°ì§€ëœ ìœ„ì¹˜
 
     [SerializeField]
-    private LayerMask placementLayermask; // ¹èÄ¡ °¡´ÉÇÑ ·¹ÀÌ¾î ¸¶½ºÅ©
+    private LayerMask placementLayermask; // ë°°ì¹˜ ê°€ëŠ¥í•œ ë ˆì´ì–´ ë§ˆìŠ¤í¬
 
-    public event Action OnClicked, OnExit; // Å¬¸¯ ¹× Á¾·á ÀÌº¥Æ®
+    public event Action OnClicked, OnExit, OnRotate; // í´ë¦­, ì¢…ë£Œ, íšŒì „ ì´ë²¤íŠ¸
 
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
-            OnClicked?.Invoke(); // ¸¶¿ì½º ¿ŞÂÊ ¹öÆ° Å¬¸¯ ½Ã OnClicked ÀÌº¥Æ® ¹ß»ı
+            OnClicked?.Invoke(); // ë§ˆìš°ìŠ¤ ì™¼ìª½ ë²„íŠ¼ í´ë¦­ ì‹œ OnClicked ì´ë²¤íŠ¸ ë°œìƒ
 
         if (Input.GetKeyDown(KeyCode.Escape))
-            OnExit?.Invoke(); // ESC Å° ÀÔ·Â ½Ã OnExit ÀÌº¥Æ® ¹ß»ı
+            OnExit?.Invoke(); // ESC í‚¤ ì…ë ¥ ì‹œ OnExit ì´ë²¤íŠ¸ ë°œìƒ
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            OnRotate?.Invoke(); // R í‚¤ ì…ë ¥ ì‹œ OnRotate ì´ë²¤íŠ¸ ë°œìƒ
+        }
     }
 
-    // UI ¿ä¼Ò À§¿¡ ¸¶¿ì½º°¡ ÀÖ´ÂÁö È®ÀÎÇÏ´Â ¸Ş¼­µå (ÇöÀç ÁÖ¼® Ã³¸®µÊ)
+    // UI ìš”ì†Œ ìœ„ì— ë§ˆìš°ìŠ¤ê°€ ìˆëŠ”ì§€ í™•ì¸í•˜ëŠ” ë©”ì„œë“œ (í˜„ì¬ ì£¼ì„ ì²˜ë¦¬ë¨)
     //public bool IsPointerOverUI()
     //    => EventSystem.current.IsPointerOverGameObject();
 
     public Vector3 GetSelectedMapPosition()
     {
-        Vector3 mousePos = Input.mousePosition; // ÇöÀç ¸¶¿ì½º À§Ä¡ °¡Á®¿À±â
-        mousePos.z = sceneCamera.nearClipPlane; // Ä«¸Ş¶óÀÇ ±ÙÆò¸é(near plane)À¸·Î Z ÁÂÇ¥ ¼³Á¤
+        Vector3 mousePos = Input.mousePosition; // í˜„ì¬ ë§ˆìš°ìŠ¤ ìœ„ì¹˜ ê°€ì ¸ì˜¤ê¸°
+        mousePos.z = sceneCamera.nearClipPlane; // ì¹´ë©”ë¼ì˜ ê·¼í‰ë©´(near plane)ìœ¼ë¡œ Z ì¢Œí‘œ ì„¤ì •
 
-        Ray ray = sceneCamera.ScreenPointToRay(mousePos); // ¸¶¿ì½º À§Ä¡¿¡¼­ ·¹ÀÌ »ı¼º
+        Ray ray = sceneCamera.ScreenPointToRay(mousePos); // ë§ˆìš°ìŠ¤ ìœ„ì¹˜ì—ì„œ ë ˆì´ ìƒì„±
         RaycastHit hit;
 
-        // ·¹ÀÌÄ³½ºÆ®¸¦ ÅëÇØ ¹èÄ¡ °¡´ÉÇÑ Ç¥¸é °¨Áö
+        // ë ˆì´ìºìŠ¤íŠ¸ë¥¼ í†µí•´ ë°°ì¹˜ ê°€ëŠ¥í•œ í‘œë©´ ê°ì§€
         if (Physics.Raycast(ray, out hit, 100, placementLayermask))
         {
-            lastPosition = hit.point; // ·¹ÀÌÄ³½ºÆ® È÷Æ® ÁöÁ¡À» ¸¶Áö¸· À§Ä¡·Î ÀúÀå
+            lastPosition = hit.point; // ë ˆì´ìºìŠ¤íŠ¸ íˆíŠ¸ ì§€ì ì„ ë§ˆì§€ë§‰ ìœ„ì¹˜ë¡œ ì €ì¥
         }
 
-        return lastPosition; // ¸¶Áö¸·À¸·Î °¨ÁöµÈ À§Ä¡ ¹İÈ¯
+        return lastPosition; // ë§ˆì§€ë§‰ìœ¼ë¡œ ê°ì§€ëœ ìœ„ì¹˜ ë°˜í™˜
     }
 }

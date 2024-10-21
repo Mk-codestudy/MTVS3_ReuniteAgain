@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,25 +6,25 @@ using UnityEngine;
 public class ObjectPlacer : MonoBehaviour
 {
     [SerializeField]
-    private List<GameObject> placedGameObjects = new(); // ¹èÄ¡µÈ °ÔÀÓ ¿ÀºêÁ§Æ®µéÀ» ÀúÀåÇÏ´Â ¸®½ºÆ®
+    private List<GameObject> placedGameObjects = new List<GameObject> (); // ë°°ì¹˜ëœ ê²Œì„ ì˜¤ë¸Œì íŠ¸ë“¤ì„ ì €ì¥í•˜ëŠ” ë¦¬ìŠ¤íŠ¸
 
-    public int PlaceObject(GameObject prefab, Vector3 position)
+    public int PlaceObject(GameObject prefab, Vector3 position, Quaternion rotation)
     {
-        // ÇÁ¸®ÆÕÀ» ÀÎ½ºÅÏ½ºÈ­ÇÏ¿© ÁöÁ¤µÈ À§Ä¡¿¡ ¿ÀºêÁ§Æ®¸¦ ¹èÄ¡ÇÏ´Â ¸Ş¼­µå
-        GameObject newObject = Instantiate(prefab); // ÇÁ¸®ÆÕÀ» º¹Á¦ÇÏ¿© »õ ¿ÀºêÁ§Æ® »ı¼º
-        newObject.transform.position = position; // »õ ¿ÀºêÁ§Æ®ÀÇ À§Ä¡ ¼³Á¤
-        placedGameObjects.Add(newObject); // »ı¼ºµÈ ¿ÀºêÁ§Æ®¸¦ ¸®½ºÆ®¿¡ Ãß°¡
-        return placedGameObjects.Count - 1; // ¹èÄ¡µÈ ¿ÀºêÁ§Æ®ÀÇ ÀÎµ¦½º ¹İÈ¯ (¸®½ºÆ®ÀÇ ¸¶Áö¸· ÀÎµ¦½º)
+        // í”„ë¦¬íŒ¹ì„ ì¸ìŠ¤í„´ìŠ¤í™”í•˜ì—¬ ì§€ì •ëœ ìœ„ì¹˜ì— ì˜¤ë¸Œì íŠ¸ë¥¼ ë°°ì¹˜í•˜ëŠ” ë©”ì„œë“œ
+        GameObject newObject = Instantiate(prefab, position, rotation); // í”„ë¦¬íŒ¹ì„ ë³µì œí•˜ì—¬ ìƒˆ ì˜¤ë¸Œì íŠ¸ ìƒì„±
+         newObject.transform.position = position; // ìƒˆ ì˜¤ë¸Œì íŠ¸ì˜ ìœ„ì¹˜ ì„¤ì •
+        placedGameObjects.Add(newObject); // ìƒì„±ëœ ì˜¤ë¸Œì íŠ¸ë¥¼ ë¦¬ìŠ¤íŠ¸ì— ì¶”ê°€
+        return placedGameObjects.Count - 1; // ë°°ì¹˜ëœ ì˜¤ë¸Œì íŠ¸ì˜ ì¸ë±ìŠ¤ ë°˜í™˜ (ë¦¬ìŠ¤íŠ¸ì˜ ë§ˆì§€ë§‰ ì¸ë±ìŠ¤)
     }
 
     internal void RemoveObjectAt(int gameObjectIndex)
     {
-        // ÁöÁ¤µÈ ÀÎµ¦½ºÀÇ °ÔÀÓ ¿ÀºêÁ§Æ®¸¦ Á¦°ÅÇÏ´Â ¸Ş¼­µå
+        // ì§€ì •ëœ ì¸ë±ìŠ¤ì˜ ê²Œì„ ì˜¤ë¸Œì íŠ¸ë¥¼ ì œê±°í•˜ëŠ” ë©”ì„œë“œ
         if (placedGameObjects.Count <= gameObjectIndex
             || placedGameObjects[gameObjectIndex] == null)
-            return; // ÀÎµ¦½º°¡ À¯È¿ÇÏÁö ¾Ê°Å³ª ÀÌ¹Ì Á¦°ÅµÈ °æ¿ì ¸Ş¼­µå Á¾·á
+            return; // ì¸ë±ìŠ¤ê°€ ìœ íš¨í•˜ì§€ ì•Šê±°ë‚˜ ì´ë¯¸ ì œê±°ëœ ê²½ìš° ë©”ì„œë“œ ì¢…ë£Œ
 
-        Destroy(placedGameObjects[gameObjectIndex]); // °ÔÀÓ ¿ÀºêÁ§Æ® ÆÄ±«
-        placedGameObjects[gameObjectIndex] = null; // ¸®½ºÆ®¿¡¼­ ÇØ´ç ÀÎµ¦½º¸¦ null·Î ¼³Á¤ (½ÇÁ¦·Î Á¦°ÅÇÏÁö ¾Ê°í null·Î Ç¥½Ã)
+        Destroy(placedGameObjects[gameObjectIndex]); // ê²Œì„ ì˜¤ë¸Œì íŠ¸ íŒŒê´´
+        placedGameObjects[gameObjectIndex] = null; // ë¦¬ìŠ¤íŠ¸ì—ì„œ í•´ë‹¹ ì¸ë±ìŠ¤ë¥¼ nullë¡œ ì„¤ì • (ì‹¤ì œë¡œ ì œê±°í•˜ì§€ ì•Šê³  nullë¡œ í‘œì‹œ)
     }
 }
