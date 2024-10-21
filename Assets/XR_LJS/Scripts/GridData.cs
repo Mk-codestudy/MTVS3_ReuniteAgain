@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,28 +6,28 @@ using UnityEngine.UIElements;
 
 public class GridData
 {
-    // ¹èÄ¡µÈ °´Ã¼µéÀÇ Á¤º¸¸¦ ÀúÀåÇÏ´Â µñ¼Å³Ê¸®
+    // ë°°ì¹˜ëœ ê°ì²´ë“¤ì˜ ì •ë³´ë¥¼ ì €ì¥í•˜ëŠ” ë”•ì…”ë„ˆë¦¬
     Dictionary<Vector3Int, PlacementData> PlacedObjects = new();
 
-    // ±×¸®µå¿¡ °´Ã¼¸¦ Ãß°¡ÇÏ´Â ¸Ş¼­µå
+    // ê·¸ë¦¬ë“œì— ê°ì²´ë¥¼ ì¶”ê°€í•˜ëŠ” ë©”ì„œë“œ
     public void AddObjectAt(Vector3Int gridPosition,
                             Vector2Int objectSize,
                             int ID,
                             int placedObjectIndex)
     {
-        // °´Ã¼°¡ Â÷ÁöÇÒ ¸ğµç À§Ä¡¸¦ °è»ê
+        // ê°ì²´ê°€ ì°¨ì§€í•  ëª¨ë“  ìœ„ì¹˜ë¥¼ ê³„ì‚°
         List<Vector3Int> positionToOccupy = CalculatePositions(gridPosition, objectSize);
         PlacementData data = new PlacementData(positionToOccupy, ID, placedObjectIndex);
         foreach (var pos in positionToOccupy)
         {
-            // ÀÌ¹Ì ÇØ´ç À§Ä¡¿¡ °´Ã¼°¡ ÀÖÀ¸¸é ¿¹¿Ü ¹ß»ı
+            // ì´ë¯¸ í•´ë‹¹ ìœ„ì¹˜ì— ê°ì²´ê°€ ìˆìœ¼ë©´ ì˜ˆì™¸ ë°œìƒ
             if (PlacedObjects.ContainsKey(pos))
                 throw new Exception($"Dictionary already contains this cell position {pos}");
             PlacedObjects[pos] = data;
         }
     }
 
-    // °´Ã¼°¡ Â÷ÁöÇÒ ¸ğµç ±×¸®µå À§Ä¡¸¦ °è»êÇÏ´Â ¸Ş¼­µå
+    // ê°ì²´ê°€ ì°¨ì§€í•  ëª¨ë“  ê·¸ë¦¬ë“œ ìœ„ì¹˜ë¥¼ ê³„ì‚°í•˜ëŠ” ë©”ì„œë“œ
     private List<Vector3Int> CalculatePositions(Vector3Int gridPosition, Vector2Int objectSize)
     {
         List<Vector3Int> returnVal = new();
@@ -41,13 +41,13 @@ public class GridData
         return returnVal;
     }
 
-    // Æ¯Á¤ À§Ä¡¿¡ °´Ã¼¸¦ ¹èÄ¡ÇÒ ¼ö ÀÖ´ÂÁö È®ÀÎÇÏ´Â ¸Ş¼­µå
+    // íŠ¹ì • ìœ„ì¹˜ì— ê°ì²´ë¥¼ ë°°ì¹˜í•  ìˆ˜ ìˆëŠ”ì§€ í™•ì¸í•˜ëŠ” ë©”ì„œë“œ
     public bool CanPlaceObjectAt(Vector3Int gridPosition, Vector2Int objectSize)
     {
         List<Vector3Int> positionToOccupy = CalculatePositions(gridPosition, objectSize);
         foreach (var pos in positionToOccupy)
         {
-            // ÀÌ¹Ì ÇØ´ç À§Ä¡¿¡ °´Ã¼°¡ ÀÖÀ¸¸é false ¹İÈ¯
+            // ì´ë¯¸ í•´ë‹¹ ìœ„ì¹˜ì— ê°ì²´ê°€ ìˆìœ¼ë©´ false ë°˜í™˜
             if (PlacedObjects.ContainsKey(pos))
                 return false;
         }
@@ -70,18 +70,18 @@ public class GridData
     }
 }
 
-// ¹èÄ¡µÈ °´Ã¼ÀÇ µ¥ÀÌÅÍ¸¦ ÀúÀåÇÏ´Â Å¬·¡½º
+// ë°°ì¹˜ëœ ê°ì²´ì˜ ë°ì´í„°ë¥¼ ì €ì¥í•˜ëŠ” í´ë˜ìŠ¤
 public class PlacementData
 {
-    // °´Ã¼°¡ Â÷ÁöÇÏ°í ÀÖ´Â ¸ğµç ±×¸®µå À§Ä¡
+    // ê°ì²´ê°€ ì°¨ì§€í•˜ê³  ìˆëŠ” ëª¨ë“  ê·¸ë¦¬ë“œ ìœ„ì¹˜
     public List<Vector3Int> occupiedPositions;
 
-    // °´Ã¼ÀÇ °íÀ¯ ID
+    // ê°ì²´ì˜ ê³ ìœ  ID
     public int ID { get; private set; }
-    // ¹èÄ¡µÈ °´Ã¼ÀÇ ÀÎµ¦½º
+    // ë°°ì¹˜ëœ ê°ì²´ì˜ ì¸ë±ìŠ¤
     public int placeObjectIndex { get; private set; }
 
-    // »ı¼ºÀÚ
+    // ìƒì„±ì
     public PlacementData(List<Vector3Int> occupiedPositions, int iD, int placeObjectIndex)
     {
         this.occupiedPositions = occupiedPositions;
