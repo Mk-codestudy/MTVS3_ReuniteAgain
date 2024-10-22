@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -81,5 +82,27 @@ public class Examples_Unitask : MonoBehaviour
         Texture2D texture = await WaitGetTexture();
         img.texture = texture;
     }
+
+    //코루틴 도중 종료하기 / 일시 정지하기
+    CancellationTokenSource _source = new();
+    async UniTaskVoid MakeCancelExample()
+    {
+        await UniTask.Delay(TimeSpan.FromSeconds(3), cancellationToken: _source.Token);
+        Debug.Log("3초가 지났을때 뜨는 메시지");
+
+    }
+    void PutThisUpdate()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            _source.Cancel(); //스페이스바를 누르면 MakeCancelExample()의 코루틴이 멈춘다.
+            _source.Dispose(); //사용하지 않으면 이를 통해 리소스를 해제해야 한다.
+        }
+    }
+
+    //실행 중인 Task 추적하기
+    //유니태스크 트래커? Window >> UnitaskTracker 켜면 유니태스크 뭐 실행되는지 다 뜸 헐 ㅁㅊ
+    //개신기하다
+
 
 }
