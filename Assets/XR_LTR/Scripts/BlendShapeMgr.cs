@@ -9,12 +9,12 @@ public class BlendShapeMgr : MonoBehaviour
 {
     // 메쉬의 BlendShape옵션을 슬라이더에 연결하여 슬라이더를 통해 BlendShape 키 값을 조정한다.
     /* 
-     0 : shot 꼬리 길이
-     1 : thin 꼬리 굵기
-     2 : big 머리 크게
-     3 : small 머리 작게
-     4 : skinny 마르게
-     5 : fat 뚱뚱하게
+     5 : shot 꼬리 길이
+     4 : thin 꼬리 굵기
+     3 : big 머리 크게
+     2 : small 머리 작게
+     1 : skinny 마르게
+     0 : fat 뚱뚱하게
     */
 
     // 슬라이더 가져오기
@@ -54,12 +54,12 @@ public class BlendShapeMgr : MonoBehaviour
         // 몸매 조절
         if (sliderBody.value < 0)
         {
-            smr.SetBlendShapeWeight(4, sliderBody.value * -1); // 몸매 날씬함
+            smr.SetBlendShapeWeight(1, sliderBody.value * -1); // 몸매 날씬함
         }
         else
         {
-            smr.SetBlendShapeWeight(4, 0);
-            smr.SetBlendShapeWeight(5, sliderBody.value); // 몸매 뚱뚱함
+            smr.SetBlendShapeWeight(1, 0);
+            smr.SetBlendShapeWeight(0, sliderBody.value); // 몸매 뚱뚱함
         }
 
         // 머리 크기 조절
@@ -74,8 +74,8 @@ public class BlendShapeMgr : MonoBehaviour
         }
 
         // 꼬리 조절
-        smr.SetBlendShapeWeight(0, sliderLength.value);
-        smr.SetBlendShapeWeight(1, sliderThick.value);
+        smr.SetBlendShapeWeight(5, sliderLength.value);
+        smr.SetBlendShapeWeight(4, sliderThick.value);
 
         // 특정 부위의 조절은 컬러피커로 한다
         eyeMat.color = fcp_eye.color;
