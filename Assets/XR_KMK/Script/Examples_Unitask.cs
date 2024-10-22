@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,53 +8,53 @@ using UnityEngine.UI;
 
 public class Examples_Unitask : MonoBehaviour
 {
-    //À¯´ÏÅÂ½ºÅ© ¸í·É¾î Á¤¸® ½ºÅ©¸³Æ®
-    //½ÇÁ¦ °ÔÀÓ¿¡ ÇÒ ´ç ±İ Áö
+    //ìœ ë‹ˆíƒœìŠ¤í¬ ëª…ë ¹ì–´ ì •ë¦¬ ìŠ¤í¬ë¦½íŠ¸
+    //ì‹¤ì œ ê²Œì„ì— í•  ë‹¹ ê¸ˆ ì§€
 
 
     void Start()
     {
-        //À¯´ÏÅÂ½ºÅ© ½ÇÇàÇÏ±â
-        HowtoStartUnitask().Forget(); //Q.ForgetÀÌ ¹¹¿¹¿ä? A.¸ô·ç? API°¡ °Á Àú·¸°Ô ¾²·¨À½
+        //ìœ ë‹ˆíƒœìŠ¤í¬ ì‹¤í–‰í•˜ê¸°
+        HowtoStartUnitask().Forget(); //Q.Forgetì´ ë­ì˜ˆìš”? A.ëª°ë£¨? APIê°€ ê± ì €ë ‡ê²Œ ì“°ë¬ìŒ
     }
 
-    //À¯´ÏÅÂ½ºÅ© ½ÇÇàÇÏ±â
+    //ìœ ë‹ˆíƒœìŠ¤í¬ ì‹¤í–‰í•˜ê¸°
     async UniTaskVoid HowtoStartUnitask()
     {
-        // ÄÚ·çÆ¾¿¡ yield°¡ ÇÊ¿äÇÏµíÀÌ À¯´ÏÅÂ½ºÅ©¿¡´Â await°¡ ÇÊ¿äÇÏ´Ù.
-        await UniTask.Delay(TimeSpan.FromSeconds(10)); //10ÃÊ¸¦ ±â´Ù¸°´Ù.
+        // ì½”ë£¨í‹´ì— yieldê°€ í•„ìš”í•˜ë“¯ì´ ìœ ë‹ˆíƒœìŠ¤í¬ì—ëŠ” awaitê°€ í•„ìš”í•˜ë‹¤.
+        await UniTask.Delay(TimeSpan.FromSeconds(10)); //10ì´ˆë¥¼ ê¸°ë‹¤ë¦°ë‹¤.
     }
 
-    //NÃÊ µÚ¿¡ ½ÇÇàÇÏ±â
+    //Nì´ˆ ë’¤ì— ì‹¤í–‰í•˜ê¸°
     async UniTaskVoid PlayAftersec()
     {
-        Debug.Log("ÀÌ ½ÃÁ¡¿¡¼­ ½Ã°£À» ¼¼±â ½ÃÀÛÇÏ°í¿ä...");
-        await UniTask.Delay(TimeSpan.FromSeconds(1/*NÃÊ*/));
-        Debug.Log("»ç¿ëÀÚ°¡ ¼³Á¤ÇÑ ½Ã°£ ÀÌÈÄ¿¡ ÀÌÂÊ ÄÚµå°¡ ½ÇÇàµË´Ï´Ù.");
+        Debug.Log("ì´ ì‹œì ì—ì„œ ì‹œê°„ì„ ì„¸ê¸° ì‹œì‘í•˜ê³ ìš”...");
+        await UniTask.Delay(TimeSpan.FromSeconds(1/*Nì´ˆ*/));
+        Debug.Log("ì‚¬ìš©ìê°€ ì„¤ì •í•œ ì‹œê°„ ì´í›„ì— ì´ìª½ ì½”ë“œê°€ ì‹¤í–‰ë©ë‹ˆë‹¤.");
     }
 
-    // TimeScaleÀÌ 0(½Ã°£ÀÌ Èå¸£Áö ¾ÊÀ» ¶§)ÀÌÁö¸¸ ½Ã°£À» Àç°í ½Í¾î!!!
+    // TimeScaleì´ 0(ì‹œê°„ì´ íë¥´ì§€ ì•Šì„ ë•Œ)ì´ì§€ë§Œ ì‹œê°„ì„ ì¬ê³  ì‹¶ì–´!!!
     async UniTaskVoid IgnoreTimeScale()
     {
-        Debug.Log("ÀÌ ½ÃÁ¡¿¡¼­ ½Ã°£À» ¼¼±â ½ÃÀÛÇÏ°í¿ä...");
+        Debug.Log("ì´ ì‹œì ì—ì„œ ì‹œê°„ì„ ì„¸ê¸° ì‹œì‘í•˜ê³ ìš”...");
         await UniTask.Delay(TimeSpan.FromSeconds(1), DelayType.UnscaledDeltaTime);
-        Debug.Log("»ç¿ëÀÚ°¡ ¼³Á¤ÇÑ ½Ã°£ ÀÌÈÄ¿¡ ÀÌÂÊ ÄÚµå°¡ ½ÇÇàµË´Ï´Ù.");
+        Debug.Log("ì‚¬ìš©ìê°€ ì„¤ì •í•œ ì‹œê°„ ì´í›„ì— ì´ìª½ ì½”ë“œê°€ ì‹¤í–‰ë©ë‹ˆë‹¤.");
     }
 
-    //Æ¯Á¤ Á¶°ÇÀ» ¸¸Á·ÇßÀ» ¶§ ½ÇÇàÇÏ±â
+    //íŠ¹ì • ì¡°ê±´ì„ ë§Œì¡±í–ˆì„ ë•Œ ì‹¤í–‰í•˜ê¸°
     int a = 5;
 
     async UniTaskVoid PlayAfterCondition()
     {
-        Debug.Log("Á¶°ÇÀÌ ¸¸Á·µÇ±â Àü¿¡´Â ¿©±â±îÁö¸¸ ½ÇÇàµÇ°í¿ä...");
-        await UniTask.WaitUntil(()=> a == 5); //Á¶°ÇÀÌ ¸¸Á·µÈ´Ù¸é (int a == 5 ¶ó¸é)
-        Debug.Log("¸¸Á·µÇ¸é ¿©±âµµ ÀÌ¾î¼­ ½ÇÇàµË´Ï´Ù.");
+        Debug.Log("ì¡°ê±´ì´ ë§Œì¡±ë˜ê¸° ì „ì—ëŠ” ì—¬ê¸°ê¹Œì§€ë§Œ ì‹¤í–‰ë˜ê³ ìš”...");
+        await UniTask.WaitUntil(()=> a == 5); //ì¡°ê±´ì´ ë§Œì¡±ëœë‹¤ë©´ (int a == 5 ë¼ë©´)
+        Debug.Log("ë§Œì¡±ë˜ë©´ ì—¬ê¸°ë„ ì´ì–´ì„œ ì‹¤í–‰ë©ë‹ˆë‹¤.");
     }
 
 
-    //À¥¿¡ ÀÖ´Â ÀÌ¹ÌÁö °¡Á®¿À±â
-    string imagepath; //URL ¸µÅ©
-    RawImage img; //À¯´ÏÆ¼·Î º¸¿©ÁÙ ÀÌ¹ÌÁö
+    //ì›¹ì— ìˆëŠ” ì´ë¯¸ì§€ ê°€ì ¸ì˜¤ê¸°
+    string imagepath; //URL ë§í¬
+    RawImage img; //ìœ ë‹ˆí‹°ë¡œ ë³´ì—¬ì¤„ ì´ë¯¸ì§€
 
     async UniTask<Texture2D> WaitGetTexture()
     {
@@ -63,17 +63,17 @@ public class Examples_Unitask : MonoBehaviour
 
         if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
         {
-            //½ÇÆĞÀÏ ¶§
+            //ì‹¤íŒ¨ì¼ ë•Œ
             Debug.LogError(request.error);
         }
         else
         {
-            //¼º°øÇßÀ» ¶§
+            //ì„±ê³µí–ˆì„ ë•Œ
             Texture2D texture = ((DownloadHandlerTexture)request.downloadHandler).texture;
             return texture;
         }
 
-        return null; //ÀÌ°Å Àû¾îÁà¾ß ¿¡·¯ »ç¶óÁ®¿ë
+        return null; //ì´ê±° ì ì–´ì¤˜ì•¼ ì—ëŸ¬ ì‚¬ë¼ì ¸ìš©
     }
 
     async UniTaskVoid Getimage()

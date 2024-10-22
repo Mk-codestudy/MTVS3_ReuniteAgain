@@ -18,7 +18,8 @@ public class Test_MakeTexture : MonoBehaviour
         string path = EditorUtility.OpenFilePanel("Select Image", "", "png,jpg,jpeg");
         if (!string.IsNullOrEmpty(path))
         {
-            StartCoroutine(LoadImage(path));
+            PlayAfterCondition(path).Forget();
+            //StartCoroutine(LoadImage(path));
         }
     }
 
@@ -34,8 +35,8 @@ public class Test_MakeTexture : MonoBehaviour
                 // 여기서 texture를 사용하여 이미지를 표시하거나 처리합니다.
 
                 catphoto = texture;
-                PostTextureResource().Forget();
-                //catbody.mainTexture = texture; //고양이 머티리얼에 입혀주는 작업
+                //PostTextureResource().Forget();
+                catbody.mainTexture = texture; //고양이 머티리얼에 입혀주는 작업
             }
             else
             {
@@ -44,6 +45,27 @@ public class Test_MakeTexture : MonoBehaviour
         }
     }
 
+    async UniTaskVoid PlayAfterCondition(string path)
+    {
+        using (UnityWebRequest www = UnityWebRequestTexture.GetTexture("file://" + path))
+        {
+            await www.SendWebRequest();
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                Texture2D texture = DownloadHandlerTexture.GetContent(www);
+                // 여기서 texture를 사용하여 이미지를 표시하거나 처리합니다.
+
+                catphoto = texture;
+                //PostTextureResource().Forget(); //통 신 시 작
+                catbody.mainTexture = texture; //고양이 머티리얼에 입혀주는 작업
+            }
+            else
+            {
+                Debug.Log("Error loading image: " + www.error);
+            }
+        }
+        Debug.Log("만족되면 여기도 이어서 실행됩니다.");
+    }
 
     async UniTask<Texture> PostTextureResource()
     {
