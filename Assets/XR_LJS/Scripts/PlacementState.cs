@@ -1,18 +1,19 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static Unity.VisualScripting.Member;
 
 public class PlacementState : IBuildingState
 {
-    private int selectedObjectIndex = -1; // ¼±ÅÃµÈ ¿ÀºêÁ§Æ®ÀÇ ÀÎµ¦½º
-    int ID; // ¿ÀºêÁ§Æ®ÀÇ °íÀ¯ ID
-    Grid grid; // UnityÀÇ Grid ÄÄÆ÷³ÍÆ® ÂüÁ¶
-    PreviewSystem previewSystem; // ¹Ì¸®º¸±â ½Ã½ºÅÛ ÂüÁ¶
-    ObjectsDatabaseSO database; // ¿ÀºêÁ§Æ® µ¥ÀÌÅÍº£ÀÌ½º ÂüÁ¶
-    GridData floorData; // ¹Ù´Ú µ¥ÀÌÅÍ ÂüÁ¶
-    GridData furnitureData; // °¡±¸ µ¥ÀÌÅÍ ÂüÁ¶
-    ObjectPlacer objectPlacer; // ¿ÀºêÁ§Æ® ¹èÄ¡ ½Ã½ºÅÛ ÂüÁ¶
+    int currentRotation = 0; // íšŒì „ê°ë„ 0
+    private int selectedObjectIndex = -1; // ì„ íƒëœ ì˜¤ë¸Œì íŠ¸ì˜ ì¸ë±ìŠ¤
+    int ID; // ì˜¤ë¸Œì íŠ¸ì˜ ê³ ìœ  ID
+    Grid grid; // Unityì˜ Grid ì»´í¬ë„ŒíŠ¸ ì°¸ì¡°
+    PreviewSystem previewSystem; // ë¯¸ë¦¬ë³´ê¸° ì‹œìŠ¤í…œ ì°¸ì¡°
+    ObjectsDatabaseSO database; // ì˜¤ë¸Œì íŠ¸ ë°ì´í„°ë² ì´ìŠ¤ ì°¸ì¡°
+    GridData floorData; // ë°”ë‹¥ ë°ì´í„° ì°¸ì¡°
+    GridData furnitureData; // ê°€êµ¬ ë°ì´í„° ì°¸ì¡°
+    ObjectPlacer objectPlacer; // ì˜¤ë¸Œì íŠ¸ ë°°ì¹˜ ì‹œìŠ¤í…œ ì°¸ì¡°
 
 
     public PlacementState(int iD,
@@ -23,7 +24,7 @@ public class PlacementState : IBuildingState
                           GridData furnitureData,
                           ObjectPlacer objectPlacer)
     {
-        // »ı¼ºÀÚ: ¸ğµç ÇÊ¿äÇÑ ÂüÁ¶¿Í µ¥ÀÌÅÍ¸¦ ÃÊ±âÈ­
+        // ìƒì„±ì: ëª¨ë“  í•„ìš”í•œ ì°¸ì¡°ì™€ ë°ì´í„°ë¥¼ ì´ˆê¸°í™”
         ID = iD;
         this.grid = grid;
         this.previewSystem = previewSystem;
@@ -31,79 +32,113 @@ public class PlacementState : IBuildingState
         this.floorData = floorData;
         this.furnitureData = furnitureData;
         this.objectPlacer = objectPlacer;
+        this.currentRotation = 0;
 
-        // µ¥ÀÌÅÍº£ÀÌ½º¿¡¼­ ÁÖ¾îÁø ID¿¡ ÇØ´çÇÏ´Â ¿ÀºêÁ§Æ®ÀÇ ÀÎµ¦½º¸¦ Ã£À½
+        // ë°ì´í„°ë² ì´ìŠ¤ì—ì„œ ì£¼ì–´ì§„ IDì— í•´ë‹¹í•˜ëŠ” ì˜¤ë¸Œì íŠ¸ì˜ ì¸ë±ìŠ¤ë¥¼ ì°¾ìŒ
         selectedObjectIndex = database.objectData.FindIndex(data => data.ID == ID);
         if (selectedObjectIndex > -1)
         {
-            // À¯È¿ÇÑ ÀÎµ¦½º¸¦ Ã£¾Ò´Ù¸é ¹Ì¸®º¸±â ½ÃÀÛ
+            // ìœ íš¨í•œ ì¸ë±ìŠ¤ë¥¼ ì°¾ì•˜ë‹¤ë©´ ë¯¸ë¦¬ë³´ê¸° ì‹œì‘
             previewSystem.StartShowingPlacementPreview(
                 database.objectData[selectedObjectIndex].Prefab,
                 database.objectData[selectedObjectIndex].Size);
+           
         }
         else
-            // À¯È¿ÇÑ ÀÎµ¦½º¸¦ Ã£Áö ¸øÇß´Ù¸é ¿¹¿Ü ¹ß»ı
+            // ìœ íš¨í•œ ì¸ë±ìŠ¤ë¥¼ ì°¾ì§€ ëª»í–ˆë‹¤ë©´ ì˜ˆì™¸ ë°œìƒ
             throw new System.Exception($"No object with ID {iD}");
 
+    }
+    public int GetCurrentRotation()
+    {
+        return  currentRotation; // í˜„ì¬ íšŒì „ ê°ë„ ë°˜í™˜
+    }
+    public void ResetRotation()
+    {
+        currentRotation = 0; // íšŒì „ ê°ë„ë¥¼ 0ìœ¼ë¡œ ì´ˆê¸°í™”
+                             // previewSystem.UpdateRotation(currentRotation); // í”„ë¦¬ë·° ì‹œìŠ¤í…œì˜ íšŒì „ ì—…ë°ì´íŠ¸
+       // Rotate();
+       // UpdateRotation();
     }
 
     public void EndState()
     {
-        // »óÅÂ Á¾·á ½Ã ¹Ì¸®º¸±â ÁßÁö
+        // ìƒíƒœ ì¢…ë£Œ ì‹œ ë¯¸ë¦¬ë³´ê¸° ì¤‘ì§€
         previewSystem.StopShowingPreview();
     }
 
     public void OnAction(Vector3Int gridPosition)
     {
-        // »ç¿ëÀÚ ¾×¼Ç(¿¹: Å¬¸¯) ½Ã È£ÃâµÇ´Â ¸Ş¼­µå
+        // ì‚¬ìš©ì ì•¡ì…˜(ì˜ˆ: í´ë¦­) ì‹œ í˜¸ì¶œë˜ëŠ” ë©”ì„œë“œ
 
-        // ÇöÀç ±×¸®µå À§Ä¡¿¡ ¿ÀºêÁ§Æ® ¹èÄ¡ °¡´É ¿©ºÎ È®ÀÎ
+        // í˜„ì¬ ê·¸ë¦¬ë“œ ìœ„ì¹˜ì— ì˜¤ë¸Œì íŠ¸ ë°°ì¹˜ ê°€ëŠ¥ ì—¬ë¶€ í™•ì¸
         bool placementValidity = CheckPlacementValidity(gridPosition, selectedObjectIndex);
         if (placementValidity == false)
         {
-            return; // ¹èÄ¡ ºÒ°¡´ÉÇÏ¸é ¸Ş¼­µå Á¾·á
+            return; // ë°°ì¹˜ ë¶ˆê°€ëŠ¥í•˜ë©´ ë©”ì„œë“œ ì¢…ë£Œ
         }
 
-        // ¿ÀºêÁ§Æ® ½ÇÁ¦ ¹èÄ¡
-        int index = objectPlacer.PlaceObject(database.objectData[selectedObjectIndex].Prefab,
-            grid.CellToWorld(gridPosition));
+        Vector3 worldPosition = grid.CellToWorld(gridPosition);
+        Quaternion rotation = Quaternion.Euler(0,currentRotation,0);
 
-        // ¹Ù´ÚÀÎÁö °¡±¸ÀÎÁö¿¡ µû¶ó ÀûÀıÇÑ GridData ¼±ÅÃ
+
+        // ì˜¤ë¸Œì íŠ¸ ì‹¤ì œ ë°°ì¹˜
+        int index = objectPlacer.PlaceObject(database.objectData[selectedObjectIndex].Prefab,
+            worldPosition,
+            rotation);
+
+        // ë°”ë‹¥ì¸ì§€ ê°€êµ¬ì¸ì§€ì— ë”°ë¼ ì ì ˆí•œ GridData ì„ íƒ
         GridData selectedData = database.objectData[selectedObjectIndex].ID == 0 ?
             floorData :
             furnitureData;
 
-        // ¼±ÅÃµÈ GridData¿¡ ¿ÀºêÁ§Æ® Á¤º¸ Ãß°¡
+        // ì„ íƒëœ GridDataì— ì˜¤ë¸Œì íŠ¸ ì •ë³´ ì¶”ê°€
         selectedData.AddObjectAt(gridPosition,
             database.objectData[selectedObjectIndex].Size,
             database.objectData[selectedObjectIndex].ID,
-            index);
+            index,
+            currentRotation);
 
-        // ¹Ì¸®º¸±â À§Ä¡ ¾÷µ¥ÀÌÆ® (¹èÄ¡ ÈÄ¿¡´Â À¯È¿ÇÏÁö ¾ÊÀ½À» Ç¥½Ã)
-        previewSystem.UpdatePosition(grid.CellToWorld(gridPosition), false);
+        // ë¯¸ë¦¬ë³´ê¸° ìœ„ì¹˜ ì—…ë°ì´íŠ¸ (ë°°ì¹˜ í›„ì—ëŠ” ìœ íš¨í•˜ì§€ ì•ŠìŒì„ í‘œì‹œ)
+        previewSystem.UpdatePosition(worldPosition, false);
+        
     }
+
 
     private bool CheckPlacementValidity(Vector3Int gridPosition, int selectedObjectIndex)
     {
-        // ¿ÀºêÁ§Æ® ¹èÄ¡ °¡´É ¿©ºÎ¸¦ È®ÀÎÇÏ´Â ¸Ş¼­µå
+        // ì˜¤ë¸Œì íŠ¸ ë°°ì¹˜ ê°€ëŠ¥ ì—¬ë¶€ë¥¼ í™•ì¸í•˜ëŠ” ë©”ì„œë“œ
 
-        // ¹Ù´ÚÀÎÁö °¡±¸ÀÎÁö¿¡ µû¶ó ÀûÀıÇÑ GridData ¼±ÅÃ
+        // ë°”ë‹¥ì¸ì§€ ê°€êµ¬ì¸ì§€ì— ë”°ë¼ ì ì ˆí•œ GridData ì„ íƒ
         GridData selectedData = database.objectData[selectedObjectIndex].ID == 0 ?
             floorData :
             furnitureData;
 
-        // ¼±ÅÃµÈ À§Ä¡¿¡ ¿ÀºêÁ§Æ® ¹èÄ¡ °¡´É ¿©ºÎ ¹İÈ¯
+        // ì„ íƒëœ ìœ„ì¹˜ì— ì˜¤ë¸Œì íŠ¸ ë°°ì¹˜ ê°€ëŠ¥ ì—¬ë¶€ ë°˜í™˜
         return selectedData.CanPlaceObjectAt(gridPosition, database.objectData[selectedObjectIndex].Size);
     }
 
     public void UpdateState(Vector3Int gridPosition)
     {
-        // »óÅÂ ¾÷µ¥ÀÌÆ® (¿¹: ¸¶¿ì½º ÀÌµ¿ ½Ã È£Ãâ)
+        // ìƒíƒœ ì—…ë°ì´íŠ¸ (ì˜ˆ: ë§ˆìš°ìŠ¤ ì´ë™ ì‹œ í˜¸ì¶œ)
 
-        // ÇöÀç ±×¸®µå À§Ä¡ÀÇ ¹èÄ¡ °¡´É ¿©ºÎ È®ÀÎ
+        // í˜„ì¬ ê·¸ë¦¬ë“œ ìœ„ì¹˜ì˜ ë°°ì¹˜ ê°€ëŠ¥ ì—¬ë¶€ í™•ì¸
         bool placementValidity = CheckPlacementValidity(gridPosition, selectedObjectIndex);
 
-        // ¹Ì¸®º¸±â ½Ã½ºÅÛ ¾÷µ¥ÀÌÆ®
+        // ë¯¸ë¦¬ë³´ê¸° ì‹œìŠ¤í…œ ì—…ë°ì´íŠ¸
         previewSystem.UpdatePosition(grid.CellToWorld(gridPosition), placementValidity);
+       
+    }
+    public void Rotate()
+    {
+        currentRotation = (currentRotation + 90) % 180;
+        previewSystem.UpdateRotation(currentRotation);
+      //  Debug.Log($"Rotated to {currentRotation} degrees12");
+    }
+
+    private void UpdateRotation()
+    {
+        previewSystem.UpdateRotation(currentRotation);
+     //   Debug.Log($"Preview rotation updated to {currentRotation} degrees");
     }
 }

@@ -1,29 +1,30 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu] // Unity ¿¡µğÅÍ¿¡¼­ ÀÌ ScriptableObject¸¦ »ı¼ºÇÒ ¼ö ÀÖ°Ô ÇØÁÖ´Â ¼Ó¼º
+[CreateAssetMenu] // Unity ì—ë””í„°ì—ì„œ ì´ ScriptableObjectë¥¼ ìƒì„±í•  ìˆ˜ ìˆê²Œ í•´ì£¼ëŠ” ì†ì„±
 public class ObjectsDatabaseSO : ScriptableObject
 {
-    public List<ObjectData> objectData = new List<ObjectData>(); // ObjectData °´Ã¼µéÀÇ ¸®½ºÆ®
+    public List<ObjectData> objectData = new List<ObjectData>(); // ObjectData ê°ì²´ë“¤ì˜ ë¦¬ìŠ¤íŠ¸
 }
 
-[Serializable] // ÀÌ Å¬·¡½º¸¦ Á÷·ÄÈ­ °¡´ÉÇÏ°Ô ¸¸µå´Â ¼Ó¼º
-public class ObjectData // °´Ã¼ µ¥ÀÌÅÍ¸¦ Á¤ÀÇÇÏ´Â Å¬·¡½º
+[Serializable] // ì´ í´ë˜ìŠ¤ë¥¼ ì§ë ¬í™” ê°€ëŠ¥í•˜ê²Œ ë§Œë“œëŠ” ì†ì„±
+public class ObjectData // ê°ì²´ ë°ì´í„°ë¥¼ ì •ì˜í•˜ëŠ” í´ë˜ìŠ¤
 {
-    // ³ªÁß¿¡´Â ¼­¹ö¿¡ ÀúÀåÇØ¾ßÇÒ °Íµé
-    // https://youtu.be/i9W1kqUinIs?si=1JJWg8ybyXCi-vbo ¿µ»ó ±×´ë·Î ±¸ÇöµÊ
+    // ë‚˜ì¤‘ì—ëŠ” ì„œë²„ì— ì €ì¥í•´ì•¼í•  ê²ƒë“¤
+    // https://youtu.be/i9W1kqUinIs?si=1JJWg8ybyXCi-vbo ì˜ìƒ ê·¸ëŒ€ë¡œ êµ¬í˜„ë¨
 
-    [field: SerializeField] // ÀÌ ÇÊµå¸¦ Unity Inspector¿¡¼­ Ç¥½ÃÇÏ°í Á÷·ÄÈ­
-    public string Name { get; private set; } // °´Ã¼ÀÇ ÀÌ¸§
-
-    [field: SerializeField]
-    public int ID { get; private set; } // °´Ã¼ÀÇ °íÀ¯ ID
+    [field: SerializeField] // ì´ í•„ë“œë¥¼ Unity Inspectorì—ì„œ í‘œì‹œí•˜ê³  ì§ë ¬í™”
+    public string Name { get; private set; } // ê°ì²´ì˜ ì´ë¦„
 
     [field: SerializeField]
-    public Vector2Int Size { get; private set; } = Vector2Int.one; // °´Ã¼ÀÇ Å©±â, ±âº»°ªÀº 1x1
+    public int ID { get; private set; } // ê°ì²´ì˜ ê³ ìœ  ID
 
     [field: SerializeField]
-    public GameObject Prefab { get; private set; } // °´Ã¼¿Í ¿¬°üµÈ ÇÁ¸®ÆÕ
+    public Vector2Int Size { get; private set; } = Vector2Int.one; // ê°ì²´ì˜ í¬ê¸°, ê¸°ë³¸ê°’ì€ 1x1
+
+    [field: SerializeField]
+    public GameObject Prefab { get; private set; } // ê°ì²´ì™€ ì—°ê´€ëœ í”„ë¦¬íŒ¹
+
 }

@@ -1,53 +1,53 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class PreviewSystem : MonoBehaviour
 {
     [SerializeField]
-    private float previewYOffset = 0.06f; // ÇÁ¸®ºä ¿ÀºêÁ§Æ®ÀÇ YÃà ¿ÀÇÁ¼Â
+    private float previewYOffset = 0.06f; // í”„ë¦¬ë·° ì˜¤ë¸Œì íŠ¸ì˜ Yì¶• ì˜¤í”„ì…‹
 
     [SerializeField]
-    private GameObject cellIndicator; // ¼¿ Ç¥½Ã±â °ÔÀÓ ¿ÀºêÁ§Æ®
-    private GameObject previewObject; // ÇÁ¸®ºä ¿ÀºêÁ§Æ®
+    private GameObject cellIndicator; // ì…€ í‘œì‹œê¸° ê²Œì„ ì˜¤ë¸Œì íŠ¸
+    private GameObject previewObject; // í”„ë¦¬ë·° ì˜¤ë¸Œì íŠ¸
 
     [SerializeField]
-    private Material previewMaterialPrefab; // ÇÁ¸®ºä ¸ÓÆ¼¸®¾ó ÇÁ¸®ÆÕ
-    private Material previewMaterialInstance; // ÇÁ¸®ºä ¸ÓÆ¼¸®¾ó ÀÎ½ºÅÏ½º
+    private Material previewMaterialPrefab; // í”„ë¦¬ë·° ë¨¸í‹°ë¦¬ì–¼ í”„ë¦¬íŒ¹
+    private Material previewMaterialInstance; // í”„ë¦¬ë·° ë¨¸í‹°ë¦¬ì–¼ ì¸ìŠ¤í„´ìŠ¤
 
-    private Renderer cellIndicatorRenderer; // ¼¿ Ç¥½Ã±âÀÇ ·»´õ·¯
+    private Renderer cellIndicatorRenderer; // ì…€ í‘œì‹œê¸°ì˜ ë Œë”ëŸ¬
 
     private void Start()
     {
-        previewMaterialInstance = new Material(previewMaterialPrefab); // ÇÁ¸®ºä ¸ÓÆ¼¸®¾ó ÀÎ½ºÅÏ½º »ı¼º
-        cellIndicator.SetActive(false); // ÃÊ±â¿¡ ¼¿ Ç¥½Ã±â ºñÈ°¼ºÈ­
-        cellIndicatorRenderer = cellIndicator.GetComponentInChildren<Renderer>(); // ¼¿ Ç¥½Ã±âÀÇ ·»´õ·¯ ÄÄÆ÷³ÍÆ® °¡Á®¿À±â
+        previewMaterialInstance = new Material(previewMaterialPrefab); // í”„ë¦¬ë·° ë¨¸í‹°ë¦¬ì–¼ ì¸ìŠ¤í„´ìŠ¤ ìƒì„±
+        cellIndicator.SetActive(false); // ì´ˆê¸°ì— ì…€ í‘œì‹œê¸° ë¹„í™œì„±í™”
+        cellIndicatorRenderer = cellIndicator.GetComponentInChildren<Renderer>(); // ì…€ í‘œì‹œê¸°ì˜ ë Œë”ëŸ¬ ì»´í¬ë„ŒíŠ¸ ê°€ì ¸ì˜¤ê¸°
     }
 
     public void StartShowingPlacementPreview(GameObject prefab, Vector2Int size)
     {
-        previewObject = Instantiate(prefab); // ÇÁ¸®ÆÕÀ» ÀÎ½ºÅÏ½ºÈ­ÇÏ¿© ÇÁ¸®ºä ¿ÀºêÁ§Æ® »ı¼º
-        PreparePreview(previewObject); // ÇÁ¸®ºä ¿ÀºêÁ§Æ® ÁØºñ
-        PrepareCursor(size); // Ä¿¼­(¼¿ Ç¥½Ã±â) ÁØºñ
-        cellIndicator.SetActive(true); // ¼¿ Ç¥½Ã±â È°¼ºÈ­
+        previewObject = Instantiate(prefab); // í”„ë¦¬íŒ¹ì„ ì¸ìŠ¤í„´ìŠ¤í™”í•˜ì—¬ í”„ë¦¬ë·° ì˜¤ë¸Œì íŠ¸ ìƒì„±
+        PreparePreview(previewObject); // í”„ë¦¬ë·° ì˜¤ë¸Œì íŠ¸ ì¤€ë¹„
+        PrepareCursor(size); // ì»¤ì„œ(ì…€ í‘œì‹œê¸°) ì¤€ë¹„
+        cellIndicator.SetActive(true); // ì…€ í‘œì‹œê¸° í™œì„±í™”
     }
 
     private void PrepareCursor(Vector2Int size)
     {
         if (size.x > 0 || size.y > 0)
         {
-            cellIndicator.transform.localScale = new Vector3(size.x, 1, size.y); // Ä¿¼­ Å©±â Á¶Á¤
-            cellIndicatorRenderer.material.mainTextureScale = size; // Ä¿¼­ ÅØ½ºÃ³ ½ºÄÉÀÏ Á¶Á¤
+            cellIndicator.transform.localScale = new Vector3(size.x, 1, size.y); // ì»¤ì„œ í¬ê¸° ì¡°ì •
+            cellIndicatorRenderer.material.mainTextureScale = size; // ì»¤ì„œ í…ìŠ¤ì²˜ ìŠ¤ì¼€ì¼ ì¡°ì •
         }
     }
 
     private void PreparePreview(GameObject previewObject)
     {
-        Renderer[] renderers = previewObject.GetComponentsInChildren<Renderer>(); // ¸ğµç ÀÚ½Ä ·»´õ·¯ °¡Á®¿À±â
+        Renderer[] renderers = previewObject.GetComponentsInChildren<Renderer>(); // ëª¨ë“  ìì‹ ë Œë”ëŸ¬ ê°€ì ¸ì˜¤ê¸°
         foreach (Renderer renderer in renderers)
         {
             Material[] materials = renderer.materials;
             for (int i = 0; i < materials.Length; i++)
             {
-                materials[i] = previewMaterialInstance; // ¸ğµç ¸ÓÆ¼¸®¾óÀ» ÇÁ¸®ºä ¸ÓÆ¼¸®¾ó·Î ±³Ã¼
+                materials[i] = previewMaterialInstance; // ëª¨ë“  ë¨¸í‹°ë¦¬ì–¼ì„ í”„ë¦¬ë·° ë¨¸í‹°ë¦¬ì–¼ë¡œ êµì²´
             }
             renderer.materials = materials;
         }
@@ -55,40 +55,40 @@ public class PreviewSystem : MonoBehaviour
 
     public void StopShowingPreview()
     {
-        cellIndicator.SetActive(false); // ¼¿ Ç¥½Ã±â ºñÈ°¼ºÈ­
+        cellIndicator.SetActive(false); // ì…€ í‘œì‹œê¸° ë¹„í™œì„±í™”
         if (previewObject != null)
-            Destroy(previewObject); // ÇÁ¸®ºä ¿ÀºêÁ§Æ® Á¦°Å
+            Destroy(previewObject); // í”„ë¦¬ë·° ì˜¤ë¸Œì íŠ¸ ì œê±°
     }
 
     public void UpdatePosition(Vector3 position, bool validity)
     {
         if (previewObject != null)
         {
-            MovePreview(position); // ÇÁ¸®ºä ¿ÀºêÁ§Æ® ÀÌµ¿
-            ApplyFeedbackToPreview(validity); // ÇÁ¸®ºä ¿ÀºêÁ§Æ®¿¡ À¯È¿¼º ÇÇµå¹é Àû¿ë
+            MovePreview(position); // í”„ë¦¬ë·° ì˜¤ë¸Œì íŠ¸ ì´ë™
+            ApplyFeedbackToPreview(validity); // í”„ë¦¬ë·° ì˜¤ë¸Œì íŠ¸ì— ìœ íš¨ì„± í”¼ë“œë°± ì ìš©
         }
 
-        MoveCursor(position); // Ä¿¼­ ÀÌµ¿
-        ApplyFeedbackToCursor(validity); // Ä¿¼­¿¡ À¯È¿¼º ÇÇµå¹é Àû¿ë
+        MoveCursor(position); // ì»¤ì„œ ì´ë™
+        ApplyFeedbackToCursor(validity); // ì»¤ì„œì— ìœ íš¨ì„± í”¼ë“œë°± ì ìš©
     }
 
     private void ApplyFeedbackToPreview(bool validity)
     {
-        Color c = validity ? Color.white : Color.red; // À¯È¿¼º¿¡ µû¶ó »ö»ó °áÁ¤
-        c.a = 0.5f; // ¾ËÆÄ°ª ¼³Á¤
-        previewMaterialInstance.color = c; // ÇÁ¸®ºä ¸ÓÆ¼¸®¾ó »ö»ó º¯°æ
+        Color c = validity ? Color.white : Color.red; // ìœ íš¨ì„±ì— ë”°ë¼ ìƒ‰ìƒ ê²°ì •
+        c.a = 0.5f; // ì•ŒíŒŒê°’ ì„¤ì •
+        previewMaterialInstance.color = c; // í”„ë¦¬ë·° ë¨¸í‹°ë¦¬ì–¼ ìƒ‰ìƒ ë³€ê²½
     }
 
     private void ApplyFeedbackToCursor(bool validity)
     {
-        Color c = validity ? Color.white : Color.red; // À¯È¿¼º¿¡ µû¶ó »ö»ó °áÁ¤
-        c.a = 0.5f; // ¾ËÆÄ°ª ¼³Á¤
-        cellIndicatorRenderer.material.color = c; // Ä¿¼­ ¸ÓÆ¼¸®¾ó »ö»ó º¯°æ
+        Color c = validity ? Color.white : Color.red; // ìœ íš¨ì„±ì— ë”°ë¼ ìƒ‰ìƒ ê²°ì •
+        c.a = 0.5f; // ì•ŒíŒŒê°’ ì„¤ì •
+        cellIndicatorRenderer.material.color = c; // ì»¤ì„œ ë¨¸í‹°ë¦¬ì–¼ ìƒ‰ìƒ ë³€ê²½
     }
 
     private void MoveCursor(Vector3 position)
     {
-        cellIndicator.transform.position = position; // Ä¿¼­ À§Ä¡ ÀÌµ¿
+        cellIndicator.transform.position = position; // ì»¤ì„œ ìœ„ì¹˜ ì´ë™
     }
 
     private void MovePreview(Vector3 position)
@@ -96,13 +96,20 @@ public class PreviewSystem : MonoBehaviour
         previewObject.transform.position = new Vector3(
             position.x,
             position.y + previewYOffset,
-            position.z); // ÇÁ¸®ºä ¿ÀºêÁ§Æ® À§Ä¡ ÀÌµ¿ (YÃà ¿ÀÇÁ¼Â Àû¿ë)
+            position.z); // í”„ë¦¬ë·° ì˜¤ë¸Œì íŠ¸ ìœ„ì¹˜ ì´ë™ (Yì¶• ì˜¤í”„ì…‹ ì ìš©)
+    }
+    public void UpdateRotation(int rotation)
+    {
+        if (previewObject != null)
+        {
+            previewObject.transform.rotation = Quaternion.Euler(0,rotation,0);  // í”„ë¦¬ë·° ì˜¤ë¸Œì íŠ¸ íšŒì „ ì—…ë°ì´íŠ¸
+        }
     }
 
     internal void StartShowingRemovePreview()
     {
-        cellIndicator.SetActive(true); // ¼¿ Ç¥½Ã±â È°¼ºÈ­
-        PrepareCursor(Vector2Int.one); // 1x1 Å©±âÀÇ Ä¿¼­ ÁØºñ
-        ApplyFeedbackToCursor(false); // Ä¿¼­¿¡ 'Á¦°Å' »óÅÂ ÇÇµå¹é Àû¿ë
+        cellIndicator.SetActive(true); // ì…€ í‘œì‹œê¸° í™œì„±í™”
+        PrepareCursor(Vector2Int.one); // 1x1 í¬ê¸°ì˜ ì»¤ì„œ ì¤€ë¹„
+        ApplyFeedbackToCursor(false); // ì»¤ì„œì— 'ì œê±°' ìƒíƒœ í”¼ë“œë°± ì ìš©
     }
 }

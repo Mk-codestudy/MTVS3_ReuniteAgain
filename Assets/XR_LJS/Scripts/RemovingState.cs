@@ -1,16 +1,16 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class RemovingState : IBuildingState
 {
-    private int gameObjectIndex = -1; // Á¦°ÅÇÒ °ÔÀÓ ¿ÀºêÁ§Æ®ÀÇ ÀÎµ¦½º
-    Grid grid; // ±×¸®µå ½Ã½ºÅÛ ÂüÁ¶
-    PreviewSystem previewSystem; // ¹Ì¸®º¸±â ½Ã½ºÅÛ ÂüÁ¶
-    GridData floorData; // ¹Ù´Ú µ¥ÀÌÅÍ ÂüÁ¶
-    GridData furnitureData; // °¡±¸ µ¥ÀÌÅÍ ÂüÁ¶
-    ObjectPlacer objectPlacer; // ¿ÀºêÁ§Æ® ¹èÄ¡±â ÂüÁ¶
+    private int gameObjectIndex = -1; // ì œê±°í•  ê²Œì„ ì˜¤ë¸Œì íŠ¸ì˜ ì¸ë±ìŠ¤
+    Grid grid; // ê·¸ë¦¬ë“œ ì‹œìŠ¤í…œ ì°¸ì¡°
+    PreviewSystem previewSystem; // ë¯¸ë¦¬ë³´ê¸° ì‹œìŠ¤í…œ ì°¸ì¡°
+    GridData floorData; // ë°”ë‹¥ ë°ì´í„° ì°¸ì¡°
+    GridData furnitureData; // ê°€êµ¬ ë°ì´í„° ì°¸ì¡°
+    ObjectPlacer objectPlacer; // ì˜¤ë¸Œì íŠ¸ ë°°ì¹˜ê¸° ì°¸ì¡°
 
 
     public RemovingState(Grid grid,
@@ -25,51 +25,51 @@ public class RemovingState : IBuildingState
         this.furnitureData = furnitureData;
         this.objectPlacer = objectPlacer;
 
-        previewSystem.StartShowingRemovePreview(); // Á¦°Å ¹Ì¸®º¸±â ½ÃÀÛ
+        previewSystem.StartShowingRemovePreview(); // ì œê±° ë¯¸ë¦¬ë³´ê¸° ì‹œì‘
     }
 
     public void EndState()
     {
-        previewSystem.StopShowingPreview(); // ¹Ì¸®º¸±â ÁßÁö
+        previewSystem.StopShowingPreview(); // ë¯¸ë¦¬ë³´ê¸° ì¤‘ì§€
     }
 
     public void OnAction(Vector3Int gridPosition)
     {
-        GridData selectedData = null; // Á¦°ÅÇÒ µ¥ÀÌÅÍ ¼±ÅÃÀ» À§ÇÑ º¯¼ö
+        GridData selectedData = null; // ì œê±°í•  ë°ì´í„° ì„ íƒì„ ìœ„í•œ ë³€ìˆ˜
         if (furnitureData.CanPlaceObjectAt(gridPosition, Vector2Int.one) == false)
         {
-            selectedData = furnitureData; // °¡±¸¸¦ Á¦°ÅÇÒ ¼ö ÀÖ´Â °æ¿ì
+            selectedData = furnitureData; // ê°€êµ¬ë¥¼ ì œê±°í•  ìˆ˜ ìˆëŠ” ê²½ìš°
         }
         else if (floorData.CanPlaceObjectAt(gridPosition, Vector2Int.one) == false)
         {
-            selectedData = floorData; // ¹Ù´ÚÀ» Á¦°ÅÇÒ ¼ö ÀÖ´Â °æ¿ì
+            selectedData = floorData; // ë°”ë‹¥ì„ ì œê±°í•  ìˆ˜ ìˆëŠ” ê²½ìš°
         }
 
         if (selectedData == null)
         {
-            return; // Á¦°ÅÇÒ ¼ö ÀÖ´Â ¿ÀºêÁ§Æ®°¡ ¾ø´Â °æ¿ì
+            return; // ì œê±°í•  ìˆ˜ ìˆëŠ” ì˜¤ë¸Œì íŠ¸ê°€ ì—†ëŠ” ê²½ìš°
         }
         else
         {
-            gameObjectIndex = selectedData.GetRepresentationIndex(gridPosition); // Á¦°ÅÇÒ ¿ÀºêÁ§Æ®ÀÇ ÀÎµ¦½º °¡Á®¿À±â
+            gameObjectIndex = selectedData.GetRepresentationIndex(gridPosition); // ì œê±°í•  ì˜¤ë¸Œì íŠ¸ì˜ ì¸ë±ìŠ¤ ê°€ì ¸ì˜¤ê¸°
             if (gameObjectIndex == -1)
-                return; // À¯È¿ÇÏÁö ¾ÊÀº ÀÎµ¦½ºÀÎ °æ¿ì
-            selectedData.RemoveObjectAt(gridPosition); // ±×¸®µå µ¥ÀÌÅÍ¿¡¼­ ¿ÀºêÁ§Æ® Á¦°Å
-            objectPlacer.RemoveObjectAt(gameObjectIndex); // ½ÇÁ¦ °ÔÀÓ ¿ÀºêÁ§Æ® Á¦°Å
+                return; // ìœ íš¨í•˜ì§€ ì•Šì€ ì¸ë±ìŠ¤ì¸ ê²½ìš°
+            selectedData.RemoveObjectAt(gridPosition); // ê·¸ë¦¬ë“œ ë°ì´í„°ì—ì„œ ì˜¤ë¸Œì íŠ¸ ì œê±°
+            objectPlacer.RemoveObjectAt(gameObjectIndex); // ì‹¤ì œ ê²Œì„ ì˜¤ë¸Œì íŠ¸ ì œê±°
         }
-        Vector3 cellPosition = grid.CellToWorld(gridPosition); // ±×¸®µå À§Ä¡¸¦ ¿ùµå ÁÂÇ¥·Î º¯È¯
-        previewSystem.UpdatePosition(cellPosition, CheckIfSelectionIsValid(gridPosition)); // ¹Ì¸®º¸±â À§Ä¡ ¹× À¯È¿¼º ¾÷µ¥ÀÌÆ®
+        Vector3 cellPosition = grid.CellToWorld(gridPosition); // ê·¸ë¦¬ë“œ ìœ„ì¹˜ë¥¼ ì›”ë“œ ì¢Œí‘œë¡œ ë³€í™˜
+        previewSystem.UpdatePosition(cellPosition, CheckIfSelectionIsValid(gridPosition)); // ë¯¸ë¦¬ë³´ê¸° ìœ„ì¹˜ ë° ìœ íš¨ì„± ì—…ë°ì´íŠ¸
     }
 
     private bool CheckIfSelectionIsValid(Vector3Int gridPosition)
     {
         return !(furnitureData.CanPlaceObjectAt(gridPosition, Vector2Int.one) &&
-            floorData.CanPlaceObjectAt(gridPosition, Vector2Int.one)); // °¡±¸¿Í ¹Ù´Ú ¸ğµÎ ¹èÄ¡ °¡´ÉÇÑ °æ¿ì Á¦°Å ºÒ°¡´É
+            floorData.CanPlaceObjectAt(gridPosition, Vector2Int.one)); // ê°€êµ¬ì™€ ë°”ë‹¥ ëª¨ë‘ ë°°ì¹˜ ê°€ëŠ¥í•œ ê²½ìš° ì œê±° ë¶ˆê°€ëŠ¥
     }
 
     public void UpdateState(Vector3Int gridPosition)
     {
-        bool validity = CheckIfSelectionIsValid(gridPosition); // ÇöÀç À§Ä¡ÀÇ ¼±ÅÃ À¯È¿¼º È®ÀÎ
-        previewSystem.UpdatePosition(grid.CellToWorld(gridPosition), validity); // ¹Ì¸®º¸±â ½Ã½ºÅÛ ¾÷µ¥ÀÌÆ®
+        bool validity = CheckIfSelectionIsValid(gridPosition); // í˜„ì¬ ìœ„ì¹˜ì˜ ì„ íƒ ìœ íš¨ì„± í™•ì¸
+        previewSystem.UpdatePosition(grid.CellToWorld(gridPosition), validity); // ë¯¸ë¦¬ë³´ê¸° ì‹œìŠ¤í…œ ì—…ë°ì´íŠ¸
     }
 }
