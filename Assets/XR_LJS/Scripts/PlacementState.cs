@@ -131,7 +131,7 @@ public class PlacementState : IBuildingState
     }
     public void Rotate()
     {
-        currentRotation = (currentRotation + 90) % 180;
+        currentRotation = (currentRotation - 90) % 180;
         previewSystem.UpdateRotation(currentRotation);
       //  Debug.Log($"Rotated to {currentRotation} degrees12");
     }

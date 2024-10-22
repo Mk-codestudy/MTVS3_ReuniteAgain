@@ -5,7 +5,7 @@ using UnityEngine;
 public class PosCam : MonoBehaviour
 {
    public Transform cameraTransform;
-    public float moveSpeed = 5f;
+    public float moveSpeed = 500f;
     public Vector3 offset;
 
     void Start()

@@ -34,8 +34,8 @@ public class PreviewSystem : MonoBehaviour
     {
         if (size.x > 0 || size.y > 0)
         {
-            cellIndicator.transform.localScale = new Vector3(size.x, 1, size.y); // 커서 크기 조정
-            cellIndicatorRenderer.material.mainTextureScale = size; // 커서 텍스처 스케일 조정
+             cellIndicator.transform.localScale = new Vector3(size.x, 1, size.y); // 커서 크기 조정
+             cellIndicatorRenderer.material.mainTextureScale = size; // 커서 텍스처 스케일 조정
         }
     }
 
