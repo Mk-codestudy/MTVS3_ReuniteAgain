@@ -4,6 +4,8 @@ using UnityEngine.UI;
 using UnityEngine.Networking;
 using UnityEditor;
 using Cysharp.Threading.Tasks;
+using System.Text;
+using System.Collections.Generic;
 
 public class Test_MakeTexture : MonoBehaviour
 {
@@ -26,28 +28,28 @@ public class Test_MakeTexture : MonoBehaviour
         }
     }
 
-    private IEnumerator LoadImage(string path)
-    {
-        using (UnityWebRequest www = UnityWebRequestTexture.GetTexture("file://" + path))
-        {
-            yield return www.SendWebRequest();
+    //구버전
+    //private IEnumerator LoadImage(string path)
+    //{
+    //    using (UnityWebRequest www = UnityWebRequestTexture.GetTexture("file://" + path))
+    //    {
+    //        yield return www.SendWebRequest();
 
-            if (www.result == UnityWebRequest.Result.Success)
-            {
-                Texture2D texture = DownloadHandlerTexture.GetContent(www);
-                // 여기서 texture를 사용하여 이미지를 표시하거나 처리합니다.
+    //        if (www.result == UnityWebRequest.Result.Success)
+    //        {
+    //            Texture2D texture = DownloadHandlerTexture.GetContent(www);
+    //            // 여기서 texture를 사용하여 이미지를 표시하거나 처리합니다.
 
-                catphoto = texture;
-                //PostTextureResource().Forget();
-                catbody.mainTexture = texture; //고양이 머티리얼에 입혀주는 작업
-            }
-            else
-            {
-                Debug.Log("Error loading image: " + www.error);
-            }
-        }
-    }
-
+    //            catphoto = texture;
+    //            //PostTextureResource().Forget();
+    //            catbody.mainTexture = texture; //고양이 머티리얼에 입혀주는 작업
+    //        }
+    //        else
+    //        {
+    //            Debug.Log("Error loading image: " + www.error);
+    //        }
+    //    }
+    
     async UniTaskVoid PlayAfterCondition(string path)
     {
         using (UnityWebRequest www = UnityWebRequestTexture.GetTexture("file://" + path))
@@ -70,14 +72,39 @@ public class Test_MakeTexture : MonoBehaviour
         Debug.Log("만족되면 여기도 이어서 실행됩니다.");
     }
 
+    public struct TestTexture
+    {
+        public int model;
+        public int userid;
+        public Texture photo;
+
+        public TestTexture(int model, int userid, Texture photo)
+        {
+            this.model = model;
+            this.userid = userid;
+            this.photo = photo;
+        }
+    }
+
     async UniTask<Texture> PostTextureResource(string url)
     {
+        TestTexture testTexture = new TestTexture(1, 1, catphoto);
+
+        string texturedata = JsonUtility.ToJson(testTexture, true);
+        byte[] jsonbins = Encoding.UTF8.GetBytes(texturedata);
+        
+        //List<IMultipartFormSection> mySections = new List<IMultipartFormSection>();
+        //mySections.Add(new MultipartFormDataSection("Test.png", jsonbins, "multipart/form-data"));
+
+
         UnityWebRequest request = new UnityWebRequest(url, "POST");
+        //UnityWebRequest request = UnityWebRequest.Post(url, mySections);
+        //request.SetRequestHeader("Content-Type", "image/PNG"); //서버에게 어떤 정보를 보냈는지 헤더를 통해 알려주는 과정. 서버가 이 정보를 토대로 받을 준비를 함.
+        //request.SetRequestHeader("Content-Type", "multipart/form-data"); //서버에게 어떤 정보를 보냈는지 헤더를 통해 알려주는 과정. 서버가 이 정보를 토대로 받을 준비를 함.
 
-        request.SetRequestHeader("Content-Type", "image/PNG"); //서버에게 어떤 정보를 보냈는지 헤더를 통해 알려주는 과정. 서버가 이 정보를 토대로 받을 준비를 함.
+        request.uploadHandler = new UploadHandlerRaw(jsonbins);
+        
 
-        byte[] ImgBins = catphoto.EncodeToPNG(); //Png파일로 변환
-        request.uploadHandler = new UploadHandlerRaw(ImgBins);
         //request.downloadHandler = new DownloadHandlerBuffer(); //바이트 형태 Buffer
         request.downloadHandler = new DownloadHandlerTexture(); //이미지 URL이므로 텍스쳐로 받아봅시다
 
