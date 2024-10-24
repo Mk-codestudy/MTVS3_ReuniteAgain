@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
+
+    [Header("망고")]
+    public GameObject mango;
+
     [Header("플레이어 속도")]
     [Range(1.0f, 30f)]
     public float movespeed = 10;
@@ -31,8 +35,8 @@ public class PlayerMove : MonoBehaviour
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
 
-        Vector3 dirH = transform.right * h;
-        Vector3 dirV = transform.forward * v;
+        Vector3 dirH = mango.transform.right * h;
+        Vector3 dirV = mango.transform.forward * v;
 
         Vector3 dir = dirH + dirV;
 
