@@ -32,7 +32,7 @@ public class PlacementSystem : MonoBehaviour
     int rotation = 0;
     // private int currentRotation;
 
-    private void Start()
+    public void Start()
     {
         gridVisualization.SetActive(false); // 초기에 그리드 시각화 비활성화
         floorData = new(); // 바닥 데이터 초기화
@@ -75,7 +75,7 @@ public class PlacementSystem : MonoBehaviour
         inputManager.OnExit += StopPlacement; // 종료 이벤트에 배치 중지 메서드 연결
     }
 
-    private void PlaceStructure()
+    public void PlaceStructure()
     {
         // UI 위에 있는지 확인하는 코드 (현재 주석 처리됨)
         //if (inputManager.IsPointerOverUI())

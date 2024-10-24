@@ -15,6 +15,8 @@ public class PreviewSystem : MonoBehaviour
 
     private Renderer cellIndicatorRenderer; // 셀 표시기의 렌더러
 
+
+
     private void Start()
     {
         previewMaterialInstance = new Material(previewMaterialPrefab); // 프리뷰 머티리얼 인스턴스 생성
@@ -27,16 +29,17 @@ public class PreviewSystem : MonoBehaviour
         previewObject = Instantiate(prefab); // 프리팹을 인스턴스화하여 프리뷰 오브젝트 생성
         PreparePreview(previewObject); // 프리뷰 오브젝트 준비
         PrepareCursor(size); // 커서(셀 표시기) 준비
-        cellIndicator.SetActive(true); // 셀 표시기 활성화
+                             // cellIndicator.SetActive(true); // 셀 표시기 활성화
+        // return previewObject; // 생성된 프리뷰 오브젝트 반환
     }
 
     private void PrepareCursor(Vector2Int size)
     {
-        if (size.x > 0 || size.y > 0)
-        {
-             cellIndicator.transform.localScale = new Vector3(size.x, 1, size.y); // 커서 크기 조정
-             cellIndicatorRenderer.material.mainTextureScale = size; // 커서 텍스처 스케일 조정
-        }
+        //if (size.x > 0 || size.y > 0)
+        //{
+        //     cellIndicator.transform.localScale = new Vector3(size.x, 1, size.y); // 커서 크기 조정
+        //     cellIndicatorRenderer.material.mainTextureScale = size; // 커서 텍스처 스케일 조정
+        //}
     }
 
     private void PreparePreview(GameObject previewObject)
@@ -108,7 +111,7 @@ public class PreviewSystem : MonoBehaviour
 
     internal void StartShowingRemovePreview()
     {
-        cellIndicator.SetActive(true); // 셀 표시기 활성화
+        cellIndicator.SetActive(false); // 셀 표시기 비활성화
         PrepareCursor(Vector2Int.one); // 1x1 크기의 커서 준비
         ApplyFeedbackToCursor(false); // 커서에 '제거' 상태 피드백 적용
     }

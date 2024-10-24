@@ -15,6 +15,8 @@ public class ObjectPlacer : MonoBehaviour
          newObject.transform.position = position; // 새 오브젝트의 위치 설정
         placedGameObjects.Add(newObject); // 생성된 오브젝트를 리스트에 추가
         return placedGameObjects.Count - 1; // 배치된 오브젝트의 인덱스 반환 (리스트의 마지막 인덱스)
+
+        // 여기서 생성되는 프리팹의 자식 트랜스폼을 가지고오고 그 트랜스폼에서 Y값만 회전시켜보자. - 내일 
     }
 
     internal void RemoveObjectAt(int gameObjectIndex)
