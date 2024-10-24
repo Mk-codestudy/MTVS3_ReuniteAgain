@@ -61,8 +61,8 @@ public class Test_MakeTexture : MonoBehaviour
                 // 여기서 texture를 사용하여 이미지를 표시하거나 처리합니다.
 
                 catphoto = texture;
-                PostTextureResource(url).Forget(); //통 신 시 작
-                //catbody.mainTexture = texture; //고양이 머티리얼에 입혀주는 작업
+               // PostTextureResource(url).Forget(); //통 신 시 작
+                catbody.mainTexture = texture; //고양이 머티리얼에 입혀주는 작업
             }
             else
             {
