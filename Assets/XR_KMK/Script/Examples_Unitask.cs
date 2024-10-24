@@ -1,60 +1,61 @@
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class Examples_Unitask : MonoBehaviour
 {
-    //�����½�ũ ���ɾ� ���� ��ũ��Ʈ
-    //���� ���ӿ� �� �� �� ��
+    //유니태스크 명령어 정리 스크립트
+    //실제 게임에 할 당 금 지
 
 
     void Start()
     {
-        //�����½�ũ �����ϱ�
-        HowtoStartUnitask().Forget(); //Q.Forget�� ������? A.����? API�� �� ������ ������
+        //유니태스크 실행하기
+        HowtoStartUnitask().Forget(); //Q.Forget이 뭐예요? A.몰루? API가 걍 저렇게 쓰랬음
     }
 
-    //�����½�ũ �����ϱ�
+    //유니태스크 실행하기
     async UniTaskVoid HowtoStartUnitask()
     {
-        // �ڷ�ƾ�� yield�� �ʿ��ϵ��� �����½�ũ���� await�� �ʿ��ϴ�.
-        await UniTask.Delay(TimeSpan.FromSeconds(10)); //10�ʸ� ��ٸ���.
+        // 코루틴에 yield가 필요하듯이 유니태스크에는 await가 필요하다.
+        await UniTask.Delay(TimeSpan.FromSeconds(10)); //10초를 기다린다.
     }
 
-    //N�� �ڿ� �����ϱ�
+    //N초 뒤에 실행하기
     async UniTaskVoid PlayAftersec()
     {
-        Debug.Log("�� �������� �ð��� ���� �����ϰ���...");
-        await UniTask.Delay(TimeSpan.FromSeconds(1/*N��*/));
-        Debug.Log("����ڰ� ������ �ð� ���Ŀ� ���� �ڵ尡 ����˴ϴ�.");
+        Debug.Log("이 시점에서 시간을 세기 시작하고요...");
+        await UniTask.Delay(TimeSpan.FromSeconds(1/*N초*/));
+        Debug.Log("사용자가 설정한 시간 이후에 이쪽 코드가 실행됩니다.");
     }
 
-    // TimeScale�� 0(�ð��� �帣�� ���� ��)������ �ð��� ��� �;�!!!
+    // TimeScale이 0(시간이 흐르지 않을 때)이지만 시간을 재고 싶어!!!
     async UniTaskVoid IgnoreTimeScale()
     {
-        Debug.Log("�� �������� �ð��� ���� �����ϰ���...");
+        Debug.Log("이 시점에서 시간을 세기 시작하고요...");
         await UniTask.Delay(TimeSpan.FromSeconds(1), DelayType.UnscaledDeltaTime);
-        Debug.Log("����ڰ� ������ �ð� ���Ŀ� ���� �ڵ尡 ����˴ϴ�.");
+        Debug.Log("사용자가 설정한 시간 이후에 이쪽 코드가 실행됩니다.");
     }
 
-    //Ư�� ������ �������� �� �����ϱ�
+    //특정 조건을 만족했을 때 실행하기
     int a = 5;
 
     async UniTaskVoid PlayAfterCondition()
     {
-        Debug.Log("������ �����Ǳ� ������ ��������� ����ǰ���...");
-        await UniTask.WaitUntil(()=> a == 5); //������ �����ȴٸ� (int a == 5 ���)
-        Debug.Log("�����Ǹ� ���⵵ �̾ ����˴ϴ�.");
+        Debug.Log("조건이 만족되기 전에는 여기까지만 실행되고요...");
+        await UniTask.WaitUntil(()=> a == 5); //조건이 만족된다면 (int a == 5 라면)
+        Debug.Log("만족되면 여기도 이어서 실행됩니다.");
     }
 
 
-    //���� �ִ� �̹��� ��������
-    string imagepath; //URL ��ũ
-    RawImage img; //����Ƽ�� ������ �̹���
+    //웹에 있는 이미지 가져오기
+    string imagepath; //URL 링크
+    RawImage img; //유니티로 보여줄 이미지
 
     async UniTask<Texture2D> WaitGetTexture()
     {
@@ -63,17 +64,17 @@ public class Examples_Unitask : MonoBehaviour
 
         if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
         {
-            //������ ��
+            //실패일 때
             Debug.LogError(request.error);
         }
         else
         {
-            //�������� ��
+            //성공했을 때
             Texture2D texture = ((DownloadHandlerTexture)request.downloadHandler).texture;
             return texture;
         }
 
-        return null; //�̰� ������� ���� �������
+        return null; //이거 적어줘야 에러 사라져용
     }
 
     async UniTaskVoid Getimage()
@@ -81,5 +82,27 @@ public class Examples_Unitask : MonoBehaviour
         Texture2D texture = await WaitGetTexture();
         img.texture = texture;
     }
+
+    //코루틴 도중 종료하기 / 일시 정지하기
+    CancellationTokenSource _source = new();
+    async UniTaskVoid MakeCancelExample()
+    {
+        await UniTask.Delay(TimeSpan.FromSeconds(3), cancellationToken: _source.Token);
+        Debug.Log("3초가 지났을때 뜨는 메시지");
+
+    }
+    void PutThisUpdate()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            _source.Cancel(); //스페이스바를 누르면 MakeCancelExample()의 코루틴이 멈춘다.
+            _source.Dispose(); //사용하지 않으면 이를 통해 리소스를 해제해야 한다.
+        }
+    }
+
+    //실행 중인 Task 추적하기
+    //유니태스크 트래커? Window >> UnitaskTracker 켜면 유니태스크 뭐 실행되는지 다 뜸 헐 ㅁㅊ
+    //개신기하다
+
 
 }

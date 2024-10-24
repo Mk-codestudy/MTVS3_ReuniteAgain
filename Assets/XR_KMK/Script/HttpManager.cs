@@ -1,62 +1,64 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking; //Http ³×Æ®¿öÅ© Åë½ÅÀ» À§ÇÑ ³×ÀÓ½ºÆäÀÌ½º Ãß°¡
+using UnityEngine.Networking; //Http ë„¤íŠ¸ì›Œí¬ í†µì‹ ì„ ìœ„í•œ ë„¤ì„ìŠ¤í˜ì´ìŠ¤ ì¶”ê°€
 using System.Text;
 using UnityEngine.UI;
-using System; //Json, csvÀÇ ¹®¼­ ÇüÅÂÀÇ ÀÎÄÚµù(UTF-8) »ç¿ëÀ» À§ÇÑ ³×ÀÓ½ºÆäÀÌ½º Ãß°¡
+using System;
+using Cysharp.Threading.Tasks; //Json, csvì˜ ë¬¸ì„œ í˜•íƒœì˜ ì¸ì½”ë”©(UTF-8) ì‚¬ìš©ì„ ìœ„í•œ ë„¤ì„ìŠ¤í˜ì´ìŠ¤ ì¶”ê°€
 
 public class HttpManager : MonoBehaviour
 {
-    public string url; //Public º¯¼ö·Î ÁÖ¼Ò¸¦ ÆíÇÏ°Ô Áı¾î³ÖÀ» ¼ö ÀÖ°Ô ÇÑ´Ù.
+    public string url; //Public ë³€ìˆ˜ë¡œ ì£¼ì†Œë¥¼ í¸í•˜ê²Œ ì§‘ì–´ë„£ì„ ìˆ˜ ìˆê²Œ í•œë‹¤.
 
-    [Header("¹öÆ° º¯¼ö")]
+    [Header("ë²„íŠ¼ ë³€ìˆ˜")]
     public Button btn_idle;
     public Button btn_image;
     public Button btn_PostJson;
 
 
-    [Header("GET °á°ú°ª °ü·Ã º¯¼ö")]
-    public RawImage img_response; //ÀÌ¹ÌÁö¸¦ °¡Á®¿ÔÀ» ¶§ Ãâ·Â
-    public Text text_response; //°á°ú°ª ÅØ½ºÆ®
+    [Header("GET ê²°ê³¼ê°’ ê´€ë ¨ ë³€ìˆ˜")]
+    public RawImage img_response; //ì´ë¯¸ì§€ë¥¼ ê°€ì ¸ì™”ì„ ë•Œ ì¶œë ¥
+    public Texture met_response;
+    public Text text_response; //ê²°ê³¼ê°’ í…ìŠ¤íŠ¸
 
     void Start()
     {
 
     }
 
-    public void GetIdle() //GetÅë½Å ¹öÆ° ½ÇÇà ÇÔ¼ö
+    public void GetIdle() //Getí†µì‹  ë²„íŠ¼ ì‹¤í–‰ í•¨ìˆ˜
     {
-        btn_idle.interactable = false; //¹öÆ° ºñÈ°¼ºÈ­
+        btn_idle.interactable = false; //ë²„íŠ¼ ë¹„í™œì„±í™”
         StartCoroutine(GetIdleRequest(url));
     }
 
-    //Get Åë½Å ±âº»Çü ÄÚ·çÆ¾
+    //Get í†µì‹  ê¸°ë³¸í˜• ì½”ë£¨í‹´
     IEnumerator GetIdleRequest(string url)
     {
-        //http Get Åë½Å ÁØºñ¸¦ ÇÑ´Ù.
+        //http Get í†µì‹  ì¤€ë¹„ë¥¼ í•œë‹¤.
         UnityWebRequest request = UnityWebRequest.Get(url);
 
-        //¼­¹ö¿¡ Get ¿äÃ»À» ÇÏ°í, ¼­¹ö·ÎºÎÅÍ ÀÀ´äÀÌ ¿Ã ¶§±îÁö ´ë±âÇÑ´Ù.
-        yield return request.SendWebRequest(); //ÀÌ°Ô º¸³½°Å
+        //ì„œë²„ì— Get ìš”ì²­ì„ í•˜ê³ , ì„œë²„ë¡œë¶€í„° ì‘ë‹µì´ ì˜¬ ë•Œê¹Œì§€ ëŒ€ê¸°í•œë‹¤.
+        yield return request.SendWebRequest(); //ì´ê²Œ ë³´ë‚¸ê±°
 
-        //¸¸ÀÏ ¼­¹ö·ÎºÎÅÍ ¿Â ÀÀ´äÀÌ ¼º°øÀÌ¶ó¸é... (¼º°ø ÄÚµå°¡ 200)
-        //ÀÀ´ä¹ŞÀº µ¥ÀÌÅÍ¸¦ Ãâ·ÂÇÑ´Ù
+        //ë§Œì¼ ì„œë²„ë¡œë¶€í„° ì˜¨ ì‘ë‹µì´ ì„±ê³µì´ë¼ë©´... (ì„±ê³µ ì½”ë“œê°€ 200)
+        //ì‘ë‹µë°›ì€ ë°ì´í„°ë¥¼ ì¶œë ¥í•œë‹¤
         if (request.result == UnityWebRequest.Result.Success)
         {
             string response = request.downloadHandler.text;
             print(response);
             text_response.text = response;
         }
-        //±×·¸Áö ¾Ê´Ù¸é...(400, 404, etc...)
+        //ê·¸ë ‡ì§€ ì•Šë‹¤ë©´...(400, 404, etc...)
         else
         {
-            //¿¡·¯ ³»¿ëÀ» Ãâ·ÂÇÑ´Ù
+            //ì—ëŸ¬ ë‚´ìš©ì„ ì¶œë ¥í•œë‹¤
             print(request.error);
             text_response.text = request.error;
         }
 
-        btn_idle.interactable = true; //¹öÆ° ´Ù½Ã È°¼ºÈ­
+        btn_idle.interactable = true; //ë²„íŠ¼ ë‹¤ì‹œ í™œì„±í™”
     }
 
 
@@ -65,31 +67,31 @@ public class HttpManager : MonoBehaviour
         btn_image.interactable = false;
         StartCoroutine(GetImeageRequest(url));
     }
-    //Get Åë½Å ÀÌ¹ÌÁö ¹Ş¾Æ¿À±â
+    //Get í†µì‹  ì´ë¯¸ì§€ ë°›ì•„ì˜¤ê¸°
     IEnumerator GetImeageRequest(string url)
     {
-        // get(Texture) Åë½ÅÀ» ÁØºñÇÑ´Ù.
+        // get(Texture) í†µì‹ ì„ ì¤€ë¹„í•œë‹¤.
         UnityWebRequest request = UnityWebRequestTexture.GetTexture(url);
 
-        // ¼­¹ö¿¡ ¿äÃ»À» ÇÏ°í, ÀÀ´äÀÌ ÀÖÀ» ¶§±îÁö ±â´Ù¸°´Ù.
+        // ì„œë²„ì— ìš”ì²­ì„ í•˜ê³ , ì‘ë‹µì´ ìˆì„ ë•Œê¹Œì§€ ê¸°ë‹¤ë¦°ë‹¤.
         yield return request.SendWebRequest();
 
-        // ¸¸ÀÏ, ÀÀ´äÀÌ ¼º°øÀÌ¶ó¸é...
+        // ë§Œì¼, ì‘ë‹µì´ ì„±ê³µì´ë¼ë©´...
         if (request.result == UnityWebRequest.Result.Success)
         {
-            // ¹ŞÀº ÅØ½ºÃÄ µ¥ÀÌÅÍ¸¦ Texture2D º¯¼ö¿¡ ¹Ş¾Æ³õ´Â´Ù.
+            // ë°›ì€ í…ìŠ¤ì³ ë°ì´í„°ë¥¼ Texture2D ë³€ìˆ˜ì— ë°›ì•„ë†“ëŠ”ë‹¤.
             Texture2D response = DownloadHandlerTexture.GetContent(request);
 
-            // Texture2D µ¥ÀÌÅÍ¸¦ img_responseÀÇ texture °ªÀ¸·Î ³Ö¾î´«´Ù.
+            // Texture2D ë°ì´í„°ë¥¼ img_responseì˜ texture ê°’ìœ¼ë¡œ ë„£ì–´ëˆˆë‹¤.
             img_response.texture = response;
 
-            // text_response¿¡ ¼º°ø ÄÚµå ¹øÈ£¸¦ Ãâ·ÂÇÑ´Ù.
-            text_response.text = "¼º°ø - " + request.responseCode.ToString();
+            // text_responseì— ì„±ê³µ ì½”ë“œ ë²ˆí˜¸ë¥¼ ì¶œë ¥í•œë‹¤.
+            text_response.text = "ì„±ê³µ - " + request.responseCode.ToString();
         }
-        // ±×·¸Áö ¾Ê´Ù¸é...
+        // ê·¸ë ‡ì§€ ì•Šë‹¤ë©´...
         else
         {
-            // ¿¡·¯ ³»¿ëÀ» text_response¿¡ Ãâ·ÂÇÑ´Ù.
+            // ì—ëŸ¬ ë‚´ìš©ì„ text_responseì— ì¶œë ¥í•œë‹¤.
             print(request.error);
             text_response.text = request.error;
         }
@@ -104,8 +106,8 @@ public class HttpManager : MonoBehaviour
     }
 
 
-    //Post Åë½Å
-    //Json µ¥ÀÌÅÍ¸¦ PostÇÏ´Â ÇÔ¼ö
+    //Post í†µì‹ 
+    //Json ë°ì´í„°ë¥¼ Postí•˜ëŠ” í•¨ìˆ˜
 
     public void PostJson()
     {
@@ -115,32 +117,59 @@ public class HttpManager : MonoBehaviour
 
     IEnumerator PostJsonRequest(string url)
     {
-        JoinUserData userData = new JoinUserData(1, "asdf", "·¹¿À¾ğ´Ï"); //Å×½ºÆ®ÇÒ¶§´Â ÀÌ °ªÀ» ¼öÁ¤ÇÏ¸é µÊ!!!!!!!!
-        string userjsondata = JsonUtility.ToJson(userData, true); //JsonÀ¸·Î º¯È¯!
-        byte[] jsonBins = Encoding.UTF8.GetBytes(userjsondata); //¹ÙÀÌÆ® ÇüÅÂ·Î ¹Ù²ã¾ß Àü¼ÛÀÌ µÇ´Ï±î Á¦ÀÌ½¼À» ¹ÙÀÌÆ®·Î º¯È¯!
+        JoinUserData userData = new JoinUserData(1, "asdf", "ë ˆì˜¤ì–¸ë‹ˆ"); //í…ŒìŠ¤íŠ¸í• ë•ŒëŠ” ì´ ê°’ì„ ìˆ˜ì •í•˜ë©´ ë¨!!!!!!!!
+        string userjsondata = JsonUtility.ToJson(userData, true); //Jsonìœ¼ë¡œ ë³€í™˜!
+        byte[] jsonBins = Encoding.UTF8.GetBytes(userjsondata); //ë°”ì´íŠ¸ í˜•íƒœë¡œ ë°”ê¿”ì•¼ ì „ì†¡ì´ ë˜ë‹ˆê¹Œ ì œì´ìŠ¨ì„ ë°”ì´íŠ¸ë¡œ ë³€í™˜!
 
-        UnityWebRequest request = new UnityWebRequest(url, "POST"); //Æ÷½ºÆ®!
+        UnityWebRequest request = new UnityWebRequest(url, "POST"); //í¬ìŠ¤íŠ¸!
 
-        request.SetRequestHeader("Content-Type", "application/json"); //¼­¹ö¿¡°Ô ¾î¶² Á¤º¸¸¦ º¸³Â´ÂÁö Çì´õ¸¦ ÅëÇØ ¾Ë·ÁÁÖ´Â °úÁ¤. ¼­¹ö°¡ ÀÌ Á¤º¸¸¦ Åä´ë·Î ¹ŞÀ» ÁØºñ¸¦ ÇÔ.
-        request.uploadHandler = new UploadHandlerRaw(jsonBins); //¹ÙÀÌÆ®·Î º¯È¯µÈ JsonÆÄÀÏ Àü¼Û!
-        request.downloadHandler = new DownloadHandlerBuffer(); //¹ÙÀÌÆ® ÇüÅÂ·Î ¹ŞÀ» °Å¶ó¼­ Buffer¶ó´Â °Í »ç¿ëÇÔ
+        request.SetRequestHeader("Content-Type", "application/json"); //ì„œë²„ì—ê²Œ ì–´ë–¤ ì •ë³´ë¥¼ ë³´ëƒˆëŠ”ì§€ í—¤ë”ë¥¼ í†µí•´ ì•Œë ¤ì£¼ëŠ” ê³¼ì •. ì„œë²„ê°€ ì´ ì •ë³´ë¥¼ í† ëŒ€ë¡œ ë°›ì„ ì¤€ë¹„ë¥¼ í•¨.
+        request.uploadHandler = new UploadHandlerRaw(jsonBins); //ë°”ì´íŠ¸ë¡œ ë³€í™˜ëœ JsoníŒŒì¼ ì „ì†¡!
+        request.downloadHandler = new DownloadHandlerBuffer(); //ë°”ì´íŠ¸ í˜•íƒœë¡œ ë°›ì„ ê±°ë¼ì„œ Bufferë¼ëŠ” ê²ƒ ì‚¬ìš©í•¨
 
-        //¼­¹ö¿¡ Post¸¦ Àü¼ÛÇÏ°í ÀÀ´äÀÌ ¿Ã ¶§±îÁö ±â´Ù¸°´Ù.
+        //ì„œë²„ì— Postë¥¼ ì „ì†¡í•˜ê³  ì‘ë‹µì´ ì˜¬ ë•Œê¹Œì§€ ê¸°ë‹¤ë¦°ë‹¤.
         yield return request.SendWebRequest();
 
-        if (request.result == UnityWebRequest.Result.Success) //Åë½Å¼º°ø
+        if (request.result == UnityWebRequest.Result.Success) //í†µì‹ ì„±ê³µ
         {
-            //´Ù¿î·ÎµåÇÚµé·¯¿¡¼­ ÅØ½ºÆ® °ªÀ» ¹ŞÀº µÚ UI¿¡ Ãâ·ÂÇÏ±â
+            //ë‹¤ìš´ë¡œë“œí•¸ë“¤ëŸ¬ì—ì„œ í…ìŠ¤íŠ¸ ê°’ì„ ë°›ì€ ë’¤ UIì— ì¶œë ¥í•˜ê¸°
             string response = request.downloadHandler.text;
             text_response.text = response;
             Debug.Log(response);
         }
-        else //½ÇÆĞ
+        else //ì‹¤íŒ¨
         {
             text_response.text = request.error;
             Debug.LogError(request.error);
         }
         btn_PostJson.interactable = true;
+    }
+
+
+    void PostTexture()
+    {
+        //ë²„íŠ¼ ë¹„í™œì„±í™”
+        //ì½”ë£¨í‹´ ëŒ€ì‹  ìœ ë‹ˆíƒœìŠ¤í¬ë¡œ ì‹œë„í•´ë´ì•¼ê²ë”°
+    }
+
+    async UniTask<Texture> PostTextureRequest()
+    {
+        UnityWebRequest request = new UnityWebRequest(url, "POST");
+        //ì–´ë–¤ ì •ë³´ë¥¼ ì „ì†¡í–ˆëŠ”ì§€ ì•Œë ¤ì£¼ê¸°
+        //ë°”ì´íŠ¸
+        await request.SendWebRequest();
+
+        if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
+        {
+            Debug.LogError(request.error.ToString());
+        }
+        else
+        {
+            Texture texture = ((DownloadHandlerTexture)request.downloadHandler).texture;
+            return texture;
+        }
+
+        return null;
     }
 
 
