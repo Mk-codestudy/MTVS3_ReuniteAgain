@@ -1,23 +1,24 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System; //ÆÄÀÏ ÀÔ·Â/Ãâ·ÂÀ» À§ÇØ
+using System; //íŒŒì¼ ì…ë ¥/ì¶œë ¥ì„ ìœ„í•´
 using System.Text;
-using System.IO; //ÇÑ±Û ¹®ÀÚ Ã³¸®¸¦ ÇÒ ¼ö ÀÖ°Ô Ç¥Áë ±Ô¾àÀÎ UTF-8 ¾îÂ¼±¸ ±¸Çö
+using System.IO; //í•œê¸€ ë¬¸ì ì²˜ë¦¬ë¥¼ í•  ìˆ˜ ìˆê²Œ í‘œì¥° ê·œì•½ì¸ UTF-8 ì–´ì©Œêµ¬ êµ¬í˜„
 
 
-[System.Serializable] //Á÷·ÄÈ­
-public struct UserData //struct? :: classÀÇ ±¸¹öÀü.<±¸Á¶Ã¼> µ¥ÀÌÅÍ Ã³¸®´Â ¾ê°¡ ´õ ºü¸£´Ù.
+[System.Serializable] //ì§ë ¬í™”
+public struct UserData //struct? :: classì˜ êµ¬ë²„ì „.<êµ¬ì¡°ì²´> ë°ì´í„° ì²˜ë¦¬ëŠ” ì–˜ê°€ ë” ë¹ ë¥´ë‹¤.
 {
+    //public long userId;
     public string username;
-    public int usertype; //1: °­¾ÆÁö, 2: °í¾çÀÌ, 3: °Ô½ºÆ®
+    public int usertype; //1: ê°•ì•„ì§€, 2: ê³ ì–‘ì´, 3: ê²ŒìŠ¤íŠ¸
     public string petname;
     public int petage;
     public bool petgender;
     public bool islost;
 
 
-    //¾Æ·¡¿Í °°Àº ÄÚµå·Î Vector(°ª, °ª, °ª)°ú °°ÀÌ °ıÈ£ ¾È¿¡ ¹Ù·Î º¯¼ö ¼öÄ¡ ºÎ¿©°¡´É
+    //ì•„ë˜ì™€ ê°™ì€ ì½”ë“œë¡œ Vector(ê°’, ê°’, ê°’)ê³¼ ê°™ì´ ê´„í˜¸ ì•ˆì— ë°”ë¡œ ë³€ìˆ˜ ìˆ˜ì¹˜ ë¶€ì—¬ê°€ëŠ¥
     public UserData(string username, int usertype, string petname, int petage, bool petgender, bool islost)
     {
         this.username = username;
@@ -33,37 +34,37 @@ public class JsonParser : MonoBehaviour
 {
     void Start()
     {
-        #region Jsonµ¥ÀÌÅÍ ¸¸µé°í ÀúÀåÇÏ´Â ÄÚµå
-        //±¸Á¶Ã¼ ÀÎ½ºÅÏ½º¸¦ ¸¸µç´Ù
-        UserData userdata1 = new UserData("·¹¿À¾ğ´Ï", 1, "·¹¿À", 13, false, true);
-        #region ¿ø½ÃÀûÀÎ ºÎ¿©¹æ¹ı
+        #region Jsonë°ì´í„° ë§Œë“¤ê³  ì €ì¥í•˜ëŠ” ì½”ë“œ
+        //êµ¬ì¡°ì²´ ì¸ìŠ¤í„´ìŠ¤ë¥¼ ë§Œë“ ë‹¤
+        UserData userdata1 = new UserData("ë ˆì˜¤ì–¸ë‹ˆ", 1, "ë ˆì˜¤", 13, false, true);
+        #region ì›ì‹œì ì¸ ë¶€ì—¬ë°©ë²•
         //UserData userdata1 = new UserData();
-        //userdata1.username = "·¹¿À¾ğ´Ï";
+        //userdata1.username = "ë ˆì˜¤ì–¸ë‹ˆ";
         //userdata1.usertype = 1; 
-        //userdata1.petname = "·¹¿À";
+        //userdata1.petname = "ë ˆì˜¤";
         //userdata1.petage = 13;
         //userdata1.petgender = false;
         //userdata1.islost = true;
-        //ÀÌ·± ½ÄÀ¸·Î ºÎ¿©ÇØÁÙ ¼öµµ ÀÖÁö¸¸ ³Ê¹« Èûµå´Ï Vector3(°ª, °ª, °ª)<< ³Ö¾îÁÖ´Â °ÍÃ³·³ ÇÔ¼öÈ­ÇØ¾ß°ÙÁö???? 
+        //ì´ëŸ° ì‹ìœ¼ë¡œ ë¶€ì—¬í•´ì¤„ ìˆ˜ë„ ìˆì§€ë§Œ ë„ˆë¬´ í˜ë“œë‹ˆ Vector3(ê°’, ê°’, ê°’)<< ë„£ì–´ì£¼ëŠ” ê²ƒì²˜ëŸ¼ í•¨ìˆ˜í™”í•´ì•¼ê²Ÿì§€???? 
         #endregion
 
-        //±¸Á¶Ã¼ µ¥ÀÌÅÍ¸¦ Json ÇüÅÂ·Î º¯È¯ÇÑ´Ù. 
-        string jsonUser1 = JsonUtility.ToJson(userdata1, true); //µÎ¹øÂ° bool º¯¼ö´Â ÀÌ»Ú°Ô ¹èÄ¡ÇÏ´À³Ä ¸¶´À³Ä ¿©ºÎ (»ç¶÷ º¸±âÁÁ°Ô)
+        //êµ¬ì¡°ì²´ ë°ì´í„°ë¥¼ Json í˜•íƒœë¡œ ë³€í™˜í•œë‹¤. 
+        string jsonUser1 = JsonUtility.ToJson(userdata1, true); //ë‘ë²ˆì§¸ bool ë³€ìˆ˜ëŠ” ì´ì˜ê²Œ ë°°ì¹˜í•˜ëŠëƒ ë§ˆëŠëƒ ì—¬ë¶€ (ì‚¬ëŒ ë³´ê¸°ì¢‹ê²Œ)
                                                                 //print(jsonUser1);
         #endregion
 
     }
 
-    //JsonÀ» ÆÄÀÏ ÀúÀåÇÏ±â
+    //Jsonì„ íŒŒì¼ ì €ì¥í•˜ê¸°
     public void SaveJsonData(string json)
     {
-        // 1. ÆÄÀÏ ½ºÆ®¸²À» ¾²±â ÇüÅÂ·Î ¿¬´Ù.
-        //FileStream fs = new FileStream(); //1.ÆÄÀÏ °æ·Î ¼³Á¤
+        // 1. íŒŒì¼ ìŠ¤íŠ¸ë¦¼ì„ ì“°ê¸° í˜•íƒœë¡œ ì—°ë‹¤.
+        //FileStream fs = new FileStream(); //1.íŒŒì¼ ê²½ë¡œ ì„¤ì •
 
 
-        // 2. ¿­¸° ½ºÆ®¸²¿¡ Json µ¥ÀÌÅÍ¸¦ ¾²±â·Î Àü´ŞÇÑ´Ù.
+        // 2. ì—´ë¦° ìŠ¤íŠ¸ë¦¼ì— Json ë°ì´í„°ë¥¼ ì“°ê¸°ë¡œ ì „ë‹¬í•œë‹¤.
 
-        // 3. ½ºÆ®¸²À» ´İ¾ÆÁØ´Ù.
+        // 3. ìŠ¤íŠ¸ë¦¼ì„ ë‹«ì•„ì¤€ë‹¤.
 
         // 
     }
