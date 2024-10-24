@@ -1,5 +1,10 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/XR_KMK/Prefab.meta
+guid: efa6b6008d5e05e4a8a4b9e3610cf9c3
+folderAsset: yes
+========
 guid: 0a3988e10241db84aa84ac261753c72a
+>>>>>>>> Project_Prototype:Assets/TA_KEH/Assets/MyRoom/Basic Asset Pack Interior/Scenes/Prefabs.unity.meta
 DefaultImporter:
   externalObjects: {}
   userData: 
