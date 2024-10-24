@@ -5,24 +5,32 @@ using UnityEngine;
 public class PickToy : MonoBehaviour
 {
     GameObject toy;
+    PlayerMove playerMove;
 
     // 입 위치
     public Transform biteToyPos;
-    public Vector3 pos;
-
-    public bool checkBite;
+    public Vector3 pos = new Vector3(0, 1);
 
     // 오브젝트에 다가가 E키를 누르면 입에 오리를 문다.
     // 다시 E를 누르면 문 것을 놓는다.
     void Start()
     {
-        checkBite = false;
+        playerMove = GetComponent<PlayerMove>();
     }
 
     void Update()
     {
         // 마우스 포인터 위치에 레이를 쏜다.
+        if (playerMove.check == true)
+        {
+            pos = new Vector3(0, 0.3f);
+        }
+        else 
+        {
+            pos = new Vector3(0, 1); 
+        }
         Ray ray = new Ray(transform.position + pos, transform.forward);
+
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {

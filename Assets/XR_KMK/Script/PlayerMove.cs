@@ -21,8 +21,9 @@ public class PlayerMove : MonoBehaviour
 
     Animator animator;
     CharacterController cc;
+    Collider col;
 
-    bool check = false;
+    public bool check = false;
 
     void Start()
     {
@@ -73,8 +74,7 @@ public class PlayerMove : MonoBehaviour
             animator.SetBool("Down", check);
         }
 
-        // 달리기
-        animator.SetBool("Run", Input.GetKey(KeyCode.LeftControl));
+        animator.SetBool("Run", Input.GetKey(KeyCode.LeftShift));
         #endregion
     }
 }

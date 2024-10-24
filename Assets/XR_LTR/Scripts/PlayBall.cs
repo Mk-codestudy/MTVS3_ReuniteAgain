@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayBall : MonoBehaviour
 {
+    [Header("공차기 파워")]
     public float pushPower = 1.0f;  // 밀치는 힘의 크기
 
     // 공에 닿으면 공이 밀려난다
