@@ -15,12 +15,15 @@ public class PlayerMove : MonoBehaviour
     [Header("중력값")]
     public float gravity = -9.8f; //중력
 
-
+    Animator animator;
     CharacterController cc;
+
+    bool check = false;
 
     void Start()
     {
         cc = GetComponent<CharacterController>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     void Update()
@@ -33,6 +36,8 @@ public class PlayerMove : MonoBehaviour
 
         Vector3 dir = dirH + dirV;
 
+        animator.SetFloat("DirLength", dir.magnitude);
+        dir = transform.TransformDirection(dir);
         dir.Normalize();
 
 
@@ -42,6 +47,8 @@ public class PlayerMove : MonoBehaviour
         //점프
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            animator.SetTrigger("Jump");
+
             yVelocity = jumpPower;
         }
         
@@ -50,5 +57,20 @@ public class PlayerMove : MonoBehaviour
         dir.y = yVelocity; //중력값 적용
         cc.Move(dir * movespeed * Time.deltaTime); //이동값 최종적용
 
+        #region 애니메이션
+        // 걷기
+        animator.SetFloat("DirH", h);
+        animator.SetFloat("DirV", v);
+
+        // E 키를 눌렀을 때 체크 상태를 토글
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            check = !check;
+            animator.SetBool("Down", check);
+        }
+
+        // 달리기
+        animator.SetBool("Run", Input.GetKey(KeyCode.LeftControl));
+        #endregion
     }
 }
