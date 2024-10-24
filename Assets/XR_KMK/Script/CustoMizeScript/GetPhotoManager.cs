@@ -1,12 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
-using Cysharp.Threading.Tasks.CompilerServices;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class GetPhotoManager : MonoBehaviour
@@ -66,6 +61,19 @@ public class GetPhotoManager : MonoBehaviour
                 photos[photonum] = texture; //사진을 array에 저장한다.
                 photosUI[photonum].texture = texture; //UI에도 둔다.
                 photosUI[photonum].gameObject.SetActive(true); //켜!
+
+                //if (photonum == 0) //첫 번째 사진으로 AI와 통신한다.
+                //{
+                //    catphoto = photos[0];
+
+                //    //PostTextureResource(url).Forget(); //통 신 시 작
+
+                //    //Material newbody = new Material(catbody);
+                //    //newbody.mainTexture = catphoto;
+                //    //mango.materials[0].mainTexture = catphoto;
+                //    catbody.mainTexture = catphoto; //고양이 머티리얼에 입혀주는 작업
+                //    Debug.Log("body 텍스쳐 적용완료");
+                //}
                 photonum++;
                 impbtn.interactable = true;
             }
@@ -78,17 +86,10 @@ public class GetPhotoManager : MonoBehaviour
         Debug.Log("만족되면 여기도 이어서 실행됩니다.");
     }
 
-
-    void ApplyCatPhoto() //0번째 고양이 사진을 머티리얼에 적용하기
+    public void WrapBodyTexture()//고양이 머티리얼 입혀주기
     {
         catphoto = photos[0];
-
-        //PostTextureResource(url).Forget(); //통 신 시 작
-
-        Material newbody = new Material(catbody);
-        newbody.mainTexture = catphoto;
-        mango.materials[0] = newbody;
-        //catbody.mainTexture = texture; //고양이 머티리얼에 입혀주는 작업
+        catbody.mainTexture = catphoto;
         Debug.Log("body 텍스쳐 적용완료");
     }
 
