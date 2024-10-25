@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class Proto_ControllScene : MonoBehaviour
 {
+    Proto_ControllScene pcm;
 
     private void Awake()
     {
@@ -17,15 +18,19 @@ public class Proto_ControllScene : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F5))
         {
-            ScenePagging(-1);
+            SceneManager.LoadScene("MainFlowScene");
         }
         else if (Input.GetKeyDown(KeyCode.F6))
         {
-            ScenePagging(0);
+            SceneManager.LoadScene("MainFlatformScene");
         }
         else if (Input.GetKeyDown(KeyCode.F7))
         {
-            ScenePagging(1);
+            SceneManager.LoadScene("LJS_Scene");
+        }
+        else if (Input.GetKeyDown(KeyCode.F8))
+        {
+            SceneManager.LoadScene("PlayerTestScene");
         }
     }
 
@@ -38,5 +43,15 @@ public class Proto_ControllScene : MonoBehaviour
         // F4(이전), F5(현재), F6(다음)
         SceneManager.LoadScene(currentSceneindex + num);
 
+    }
+
+    public void GotoLJS()
+    {
+        SceneManager.LoadScene("LJS_Scene");
+    }
+
+    public void GotoCommunity()
+    {
+        SceneManager.LoadScene("PlayerTestScene");
     }
 }
